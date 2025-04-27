@@ -29,37 +29,3 @@
 .name {
   font-weight: 500;
 }
-
-/* .item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    width: 200px;
-}
-
-.online {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #4caf50;
-}
-
-.offline {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #f44336;
-}
-
-.avatar {
-    border-radius: 5px;
-}
-
-.name {
-    font-weight: 500;
-    margin: 0;
-} */
