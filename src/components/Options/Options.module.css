@@ -1,0 +1,51 @@
+.options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: left;
+  margin-bottom: 30px;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.good {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.neutral {
+  background-color: #FFC107;
+  color: #333;
+}
+
+.bad {
+  background-color: #F44336;
+  color: white;
+}
+
+.resetButton {
+  background-color: #607D8B;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resetButton:hover {
+  background-color: #455A64;
+}
