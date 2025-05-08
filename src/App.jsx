@@ -7,14 +7,23 @@ import styles from './App.module.css';
 
 const App = () => {
   const [feedback, setFeedback] = useState(() => {
-    const savedFeedback = localStorage.getItem("feedbackData");
-    return savedFeedback 
-      ? JSON.parse(savedFeedback)
-      : { good: 0, neutral: 0, bad: 0 };
+    try {
+      const savedFeedback = localStorage.getItem("feedbackData");
+      return savedFeedback 
+        ? JSON.parse(savedFeedback)
+        : { good: 0, neutral: 0, bad: 0 };
+    } catch (error) {
+      console.error("Помилка при читанні з localStorage:", error);
+      return { good: 0, neutral: 0, bad: 0 };
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem("feedbackData", JSON.stringify(feedback));
+    try {
+      localStorage.setItem("feedbackData", JSON.stringify(feedback));
+    } catch (error) {
+      console.error("Помилка при збереженні в localStorage:", error);
+    }
   }, [feedback]);
 
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
