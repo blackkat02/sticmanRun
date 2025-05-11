@@ -3,16 +3,18 @@
   padding: 1.5rem;
   background: #f8f9fa;
   border-radius: 8px;
+  max-width: 500px;
 }
 
 .formGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  color: #333;
 }
 
 .input {
@@ -21,6 +23,16 @@
   border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #646cff;
+}
+
+.input.error {
+  border-color: #dc3545;
 }
 
 .button {
@@ -36,4 +48,10 @@
 
 .button:hover {
   background-color: #218838;
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
