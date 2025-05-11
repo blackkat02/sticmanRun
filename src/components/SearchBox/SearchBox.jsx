@@ -4,23 +4,23 @@ import { Formik, Form, Field } from "formik";
 import styles from './SearchBox.module.css';
 
 const SearchBox = ({ initialValues, onSearch }) => {
-  const nameFieldId = useId();
+  const searchNameFieldId = useId();
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={() => {}} // Empty function to satisfy Formik
+      onSubmit={() => {}}
     >
       {({ values, handleChange }) => (
         <Form className={styles.searchForm}>
           <div className={styles.formGroup}>
-            <label htmlFor={nameFieldId} className={styles.label}>
+            <label htmlFor={searchNameFieldId} className={styles.label}>
               Find contacts by name
             </label>
             <Field 
               type="text" 
               name="username" 
-              id={nameFieldId}
+              id={searchNameFieldId}
               className={styles.input}
               placeholder="Enter name..."
               onChange={(e) => {
