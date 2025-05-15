@@ -1,81 +1,48 @@
-import { useState, useEffect } from 'react';
-import ContactList from './components/ContactList/ContactList';
-import SearchBox from './components/SearchBox/SearchBox';
-import ContactForm from './components/ContactForm/ContactForm';
-import styles from './App.module.css';
+import { useState, useEffect } from "react";
+import SearchBar from './components/SearchBar/SearchBar';
+import ImageGallery from './components/ImageGallery/ImageGallery';
+import Loader from './components/Loader/Loader';
+import fetchPhotosQuery from './api';
+
+const ACCESS_KEY = "HXUq5Sgk7OKpZxn_DNmskkaD7tgF_y0DqNPlO3iO0lw";
 
 const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    // { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    // { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    // { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    // { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    try {
-      const savedContacts = localStorage.getItem("contacts");
-      return savedContacts 
-        ? JSON.parse(savedContacts)
-        : [];
-    } catch (error) {
-      console.error("Помилка при читанні з localStorage:", error);
-      return { good: 0, neutral: 0, bad: 0 };
-    }
-  });
+  const [gallery, setGallery] = useState([]);
+  const [query, setQuery] = useState("cat");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const handleSearch = (searchQuery) => {
+    if (searchQuery.trim() === "") return; // Додана перевірка на пустий рядок
+    setQuery(searchQuery);
+    setGallery([]); // Очищаємо галерею при новому пошуку
+  };
 
   useEffect(() => {
-    try {
-      localStorage.setItem("contacts", JSON.stringify(contacts));
-    } catch (error) {
-      console.error("Помилка при збереженні в localStorage:", error);
-    }
-  }, [contacts]);
-
-
-  // const savedLS = (contacts) => {
-  //   localStorage.setItem("contacts", JSON.stringify(contacts));
-  // }
-
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
-
-  const handleDeleteContact = (id) => {
-    setContacts(prev => {
-      const newContacts = prev.filter(contact => contact.id !== id);
-      return newContacts.map((contact, index) => ({
-        ...contact,
-        id: `id-${index + 1}`
-      }));
-    });
-  };
-
-  const handleAddContact = (newContact) => {
-    setContacts(prev => [
-      ...prev,
-      {
-        id: `id-${prev.length + 1}`,
-        ...newContact
+    const fetchPhotos = async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        const data = await fetchPhotosQuery(query);
+        setGallery(data);
+      } catch (error) {
+        console.error("Error fetching photos:", error);
+        setError(true);
+      } finally {
+        setLoading(false);
       }
-    ]);
-  };
+    }
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    fetchPhotos();
+  }, [query]);
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Phonebook</h1>
-      <ContactForm onSubmit={handleAddContact} />
-      <SearchBox 
-        initialValues={{ username: '' }}
-        onSearch={handleSearch}
-      />
-      <ContactList 
-        contacts={filteredContacts} 
-        onDelete={handleDeleteContact}
-      />
+    <div>
+      <SearchBar onSubmit={handleSearch} />
+      {error && <p>Error loading images</p>}
+      {!loading && !error && gallery.length > 0 && <ImageGallery items={gallery} />}
+      {/* <Loader loading={loading} /> */}
+      {loading && <Loader loading={loading} />}
     </div>
   );
 };
