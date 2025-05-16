@@ -1,0 +1,14 @@
+.error {
+  color: #ff6b6b;
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid #ff6b6b;
+  border-radius: 4px;
+  background-color: #fff5f5;
+}
+
+.error-details {
+  font-size: 0.8em;
+  margin-top: 10px;
+  color: #cc0000;
+}

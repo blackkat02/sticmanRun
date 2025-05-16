@@ -1,4 +1,5 @@
 import styles from './SearchBar.module.css';
+import toast from 'react-hot-toast';
 
 const SearchBar = ({ onSubmit }) => {
   const handleSubmit = (evt) => {
@@ -6,10 +7,12 @@ const SearchBar = ({ onSubmit }) => {
     const form = evt.target;
     const searchQuery = form.elements.search.value.trim();
     
-    if (searchQuery) {
-      onSubmit(searchQuery);
+    if (searchQuery === "") {
+      toast.error('Введіть пошуковий запит!');
+      return;
     }
-    
+
+    onSubmit(searchQuery);
     form.reset();
   };
 
@@ -23,8 +26,13 @@ const SearchBar = ({ onSubmit }) => {
           autoComplete="off"
           autoFocus
           placeholder="Search images and photos"
+          aria-label="Search images"
         />
-        <button type="submit" className={styles.button}>
+        <button 
+          type="submit" 
+          className={styles.button}
+          aria-label="Submit search"
+        >
           Search
         </button>
       </form>

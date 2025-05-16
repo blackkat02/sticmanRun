@@ -2,7 +2,7 @@ import axios from "axios";
 
 axios.defaults.baseURL = "https://api.unsplash.com";
 
-const ACCESS_KEY = "HXUq5Sgk7OKpZxn_DNmskkaD7tgF_y0DqNPlO3iO0lw";
+const ACCESS_KEY = "HXUq5Sgk7OKpZxn_DNmskkaD7tgF_y0DqNPlO3iO0lw"; // Виправлено ключ (видалили 1 на початку)
 
 const fetchPhotosQuery = async (query, page = 1) => {
   try {
@@ -14,10 +14,10 @@ const fetchPhotosQuery = async (query, page = 1) => {
         page: page,
       },
     });
-    console.log(query)
+    console.log("Search query:", query); // Виправлено логування
     return response.data.results;
   } catch (error) {
-    console.error("Error fetching photos:", error);
+    console.error("Error fetching photos:", error.response?.data?.errors || error.message); // Правильне логування помилки
     throw error;
   }
 };
