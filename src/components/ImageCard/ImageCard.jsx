@@ -1,9 +1,10 @@
 import styles from './ImageCard.module.css';
 
-const ImageCard = ({ photo }) => {
+const ImageCard = ({ photo, onClick }) => {
+  
   return (
-    <div className={styles.card}>
-      <img 
+    <div className={styles.card} onClick={() => onClick(photo)}>
+      <img
         src={photo.urls.small} 
         alt={photo.alt_description || 'Unsplash image'} 
         className={styles.image}

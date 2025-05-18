@@ -6,6 +6,7 @@ import Loader from './components/Loader/Loader';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
 import fetchPhotosQuery from './api';
+import ImageModal from './components/ImageModal/ImageModal';
 
 const App = () => {
   const [gallery, setGallery] = useState([]);
@@ -13,6 +14,8 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [LoadMoreBTN, setLoadMoreBTN] = useState(false);
 
   const handleSearch = (searchQuery) => {
     setQuery(searchQuery);
@@ -20,9 +23,13 @@ const App = () => {
     setPage(1);
   };
 
-  const handleLoadMore = async () => {
-    setPage(page + 1)
-  }
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
+  };
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -30,15 +37,15 @@ const App = () => {
         setLoading(true);
         setError(false);
         const data = await fetchPhotosQuery(query, page);
-        console.log(`page: ${page}`)
-        setGallery((prev) => (page === 1 ? data : [...prev, ...data]));
+        setGallery(prev => page === 1 ? data.results : [...prev, ...data.results]);
+        data.total_pages > page ? setLoadMoreBTN(true) : setLoadMoreBTN(false);
       } catch (error) {
         console.error("Error fetching photos:", error);
         setError(true);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchPhotos();
   }, [query, page]);
@@ -46,11 +53,17 @@ const App = () => {
   return (
     <div>
       <SearchBar onSubmit={handleSearch} />
-      {!loading && error && <ErrorMessage />}
-      {!loading && !error && <ImageGallery items={gallery} />}
+      {error && <ErrorMessage />}
+      <ImageGallery items={gallery} onImageClick={handleImageClick} />
+      {gallery.length > 0 && !loading && LoadMoreBTN && <LoadMoreBtn onClick={handleLoadMore} />}
       {loading && <Loader loading={loading} />}
-      {(!loading && !error && gallery.length > 0) && <LoadMoreBtn onClick={handleLoadMore} />}
       <Toaster />
+      {selectedImage && (
+        <ImageModal 
+          image={selectedImage} 
+          onClose={() => setSelectedImage(null)} 
+        />
+      )}
     </div>
   );
 };

@@ -10,12 +10,11 @@ const fetchPhotosQuery = async (query, page = 1) => {
       params: {
         client_id: ACCESS_KEY,
         query: query,
-        per_page: 12,
+        per_page: 15,
         page: page,
       },
     });
-    console.log("Search query:", query); // Виправлено логування
-    return response.data.results;
+    return response.data;
   } catch (error) {
     console.error("Error fetching photos:", error.response?.data?.errors || error.message); // Правильне логування помилки
     throw error;
