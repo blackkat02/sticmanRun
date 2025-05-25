@@ -1,0 +1,24 @@
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.link {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
