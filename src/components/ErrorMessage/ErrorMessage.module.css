@@ -1,0 +1,33 @@
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  padding: 20px;
+}
+
+.errorContent {
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffeeee;
+  border: 1px solid #ffcccc;
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.errorTitle {
+  color: #d32f2f;
+  margin: 0 0 10px 0;
+}
+
+.errorMessage {
+  color: #5f2120;
+  margin: 0;
+  line-height: 1.5;
+}
