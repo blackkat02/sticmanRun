@@ -7,7 +7,6 @@ import styles from './MoviesPage.module.css';
 const MoviesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [movies, setMovies] = useState([]);
-  const [movieId, setMovieId] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

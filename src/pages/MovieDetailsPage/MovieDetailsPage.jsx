@@ -15,7 +15,7 @@ const MovieDetailsPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isComponentActive = true; // Прапорець активності компонента
+    let isComponentActive = true;
 
     const fetchMovie = async () => {
       try {
@@ -23,14 +23,16 @@ const MovieDetailsPage = () => {
         setError(null);
         const data = await fetchMovieById(movieId);
         
-        if (isComponentActive) { // Перевіряємо чи компонент ще активний
+        if (isComponentActive) {
           setMovie(data);
+          console.log(location.state)
         }
       } catch (err) {
         if (isComponentActive) {
           setError(err.message);
         }
       } finally {
+        console.log(location.state)
         if (isComponentActive) {
           setLoading(false);
         }
@@ -40,7 +42,7 @@ const MovieDetailsPage = () => {
     fetchMovie();
 
     return () => {
-      isComponentActive = false; // Встановлюємо прапорець при розмонтуванні
+      isComponentActive = false;
     };
   }, [movieId]);
 
@@ -51,12 +53,12 @@ const MovieDetailsPage = () => {
   return (
     <div className={styles.wrapper}>
       <MovieDetails movie={movie} backLink={backLinkRef.current} />
-      
+   
       <div className={styles.additionalInfo}>
         <h3>Additional information</h3>
         <nav className={styles.nav}>
           <NavLink 
-            to="cast" 
+            to="cast"
             className={({ isActive }) => 
               isActive ? styles.activeLink : styles.link
             }

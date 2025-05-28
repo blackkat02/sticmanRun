@@ -30,7 +30,7 @@ const MovieReviews = () => {
 
   if (loading) return <Loader />;
   if (error) return <ErrorMessage message={error} />;
-  if (!reviews.length) return <p className={styles.noInfo}>Немає рецензій до цього фільму</p>;
+  if (!reviews.length) return <p className={styles.noInfo}>No Reviews</p>;
 
   return (
     <div className={styles.reviewsContainer}>
