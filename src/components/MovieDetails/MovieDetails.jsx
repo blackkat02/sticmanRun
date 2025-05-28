@@ -1,25 +1,33 @@
-export const MovieDetails = ({ movie }) => (
-  <div className="movie-details">
-    <img
-      src={
-        movie.poster_path
-          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-          : 'https://via.placeholder.com/500x750'
-      }
-      alt={movie.title}
-      width="250"
-    />
-    <div className="movie-info">
-      <h1>{movie.title} ({new Date(movie.release_date).getFullYear()})</h1>
-      <p>Рейтинг: {movie.vote_average.toFixed(1)}/10</p>
-      <h3>Огляд</h3>
-      <p>{movie.overview || 'Опис відсутній'}</p>
-      <h3>Жанри</h3>
-      <ul className="genre-list">
-        {movie.genres?.map(genre => (
-          <li key={genre.id}>{genre.name}</li>
-        ))}
-      </ul>
+import { Link } from 'react-router-dom';
+import styles from './MovieDetails.module.css';
+
+const MovieDetails = ({ movie, backLink }) => {
+  return (
+    <div className={styles.container}>
+      <Link to={backLink} className={styles.backLink}>
+        ← Go back
+      </Link>
+
+      <div className={styles.movieInfo}>
+        <img
+          src={movie.poster_path 
+            ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+            : '/placeholder.jpg'
+          }
+          alt={movie.title}
+          className={styles.poster}
+        />
+        <div className={styles.details}>
+          <h1>{movie.title} ({movie.release_date?.substring(0, 4)})</h1>
+          <p>Рейтинг: {Math.round(movie.vote_average * 10)}%</p>
+          <h2>Опис</h2>
+          <p>{movie.overview || 'Опис відсутній'}</p>
+          <h2>Жанри</h2>
+          <p>{movie.genres?.map(genre => genre.name).join(', ') || 'Невідомо'}</p>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
+export default MovieDetails;
