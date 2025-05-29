@@ -32,7 +32,6 @@ const MovieDetailsPage = () => {
           setError(err.message);
         }
       } finally {
-        console.log(location.state)
         if (isComponentActive) {
           setLoading(false);
         }
