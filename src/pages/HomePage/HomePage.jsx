@@ -9,7 +9,7 @@ const HomePage = () => {
       <div className={styles.container}>
         <h1 className={styles.title}>Campers of your dreams</h1>
         <h3>You can find everything you want in our catalog</h3>
-        <Link to="catalog">
+        <Link to="/campers">
           <button>
             View Now
           </button>

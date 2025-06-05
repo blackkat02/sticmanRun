@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="catalog" element={<CatalogPage />} />
+          <Route path="/campers" element={<CatalogPage />} />
           {/* <Route path="/catalog/:id" element={<CampersDetailsPage />}>
             <Route path="features" element={<campersFeatures />} />
             <Route path="reviews" element={<campersReviews />} />
