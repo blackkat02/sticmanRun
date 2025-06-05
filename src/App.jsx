@@ -2,15 +2,11 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from './layouts/MainLayout';
 import { lazy, Suspense } from "react";
 
-const MovieCast = lazy(() => import("./components/MovieCast/MovieCast"));
-const MovieReviews = lazy(() =>
-  import("./components/MovieReviews/MovieReviews")
-);
+const CampersFeatures = lazy(() => import("./components/CampersFeatures/CampersFeatures"));
+const CampersReviews = lazy(() => import("./components/CampersReviews/CampersReviews"));
 const HomePage = lazy(() => import("./pages/HomePage/HomePage"));
-const MovieDetailsPage = lazy(() =>
-  import("./pages/MovieDetailsPage/MovieDetailsPage")
-);
-const MoviesPage = lazy(() => import("./pages/MoviesPage/MoviesPage"));
+const CampersDetailsPage = lazy(() => import("./pages/CampersDetailsPage/CampersDetailsPage"));
+const CatalogCampersPage = lazy(() => import("./pages/MoviesPage/MoviesPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage/NotFoundPage"));
 
 function App() {
@@ -19,10 +15,10 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="/movies" element={<MoviesPage />} />
-          <Route path="/movies/:movieId" element={<MovieDetailsPage />}>
-            <Route path="cast" element={<MovieCast />} />
-            <Route path="reviews" element={<MovieReviews />} />
+          <Route path="catalog" element={<CatalogCampersPage />} />
+          <Route path="/catalog/:id" element={<CampersDetailsPage />}>
+            <Route path="features" element={<campersFeatures />} />
+            <Route path="reviews" element={<campersReviews />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />}></Route>

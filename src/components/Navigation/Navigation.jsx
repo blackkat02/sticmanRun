@@ -1,10 +1,17 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import css from './Navigation.module.css';
 
 const Navigation = () => {
   return (
+    <header className="site-header">
     <div className={css.wrapper}>
-      <nav>
+      <nav className={css.mainNav}>
+        <Link 
+          to="/" 
+          className={css.logo}
+        >
+          <p className={css.logo}>TraverTrucks</p>
+        </Link>
         <ul className={css.list}>
           <li>
             <NavLink 
@@ -18,7 +25,7 @@ const Navigation = () => {
           </li>
           <li>
             <NavLink 
-              to="/movies" 
+              to="/campers" 
               className={({ isActive }) => 
                 isActive ? `${css.link} ${css.active}` : css.link
               }
@@ -29,6 +36,7 @@ const Navigation = () => {
         </ul>
       </nav>
     </div>
+    </header>
   );
 };
 
