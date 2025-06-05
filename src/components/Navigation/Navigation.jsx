@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import css from './Navigation.module.css';  // Розкоментуйте цей рядок
+import css from './Navigation.module.css';
 
 const Navigation = () => {
   return (
@@ -23,7 +23,7 @@ const Navigation = () => {
                 isActive ? `${css.link} ${css.active}` : css.link
               }
             >
-              Movies
+              Catalog
             </NavLink>
           </li>
         </ul>

@@ -4,10 +4,13 @@ import style from "./MainLayout.module.css";
 
 const MainLayout = () => {
   return (
-    <div className={style.container}>
-      <Navigation />
-      <Outlet />
-    </div>
+    <header>
+      <div className={style.container}>
+        <Logo />
+        <Navigation />
+        <Outlet />
+      </div>
+    </header>
   );
 };
 
