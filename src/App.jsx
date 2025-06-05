@@ -2,11 +2,11 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from './layouts/MainLayout';
 import { lazy, Suspense } from "react";
 
-const CampersFeatures = lazy(() => import("./components/CampersFeatures/CampersFeatures"));
-const CampersReviews = lazy(() => import("./components/CampersReviews/CampersReviews"));
+// const CampersFeatures = lazy(() => import("./components/CampersFeatures/CampersFeatures"));
+// const CampersReviews = lazy(() => import("./components/CampersReviews/CampersReviews"));
 const HomePage = lazy(() => import("./pages/HomePage/HomePage"));
-const CampersDetailsPage = lazy(() => import("./pages/CampersDetailsPage/CampersDetailsPage"));
-const CatalogCampersPage = lazy(() => import("./pages/MoviesPage/MoviesPage"));
+// const CampersDetailsPage = lazy(() => import("./pages/CampersDetailsPage/CampersDetailsPage"));
+const CatalogPage = lazy(() => import("./pages/CatalogPage/CatalogPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage/NotFoundPage"));
 
 function App() {
@@ -15,11 +15,11 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="catalog" element={<CatalogCampersPage />} />
-          <Route path="/catalog/:id" element={<CampersDetailsPage />}>
+          <Route path="catalog" element={<CatalogPage />} />
+          {/* <Route path="/catalog/:id" element={<CampersDetailsPage />}>
             <Route path="features" element={<campersFeatures />} />
             <Route path="reviews" element={<campersReviews />} />
-          </Route>
+          </Route> */}
         </Route>
         <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
