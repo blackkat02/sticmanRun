@@ -1,6 +1,6 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { 
-  getCatalogCampersSliceThunk, 
+  getCatalogSliceThunk, 
   getDetailsCampersSliceThunk
 } from "./contactsOps";
 
@@ -23,12 +23,12 @@ const catalogCampersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getCatalogCampersSliceThunk.pending, handlePending)
-      .addCase(getCatalogCampersSliceThunk.fulfilled, (state, { payload }) => {
+      .addCase(getCatalogSliceThunk.pending, handlePending)
+      .addCase(getCatalogSliceThunk.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.items = payload;
       })
-      .addCase(getCatalogCampersSliceThunk.rejected, handleRejected)
+      .addCase(getCatalogSliceThunk.rejected, handleRejected)
       
       .addCase(getDetailsCampersSliceThunk.pending, handlePending)
       .addCase(getDetailsCampersSliceThunk.fulfilled, (state, { payload }) => {
@@ -39,10 +39,10 @@ const catalogCampersSlice = createSlice({
   },
 });
 
-export const selectCatalogCampersSlice = (state) => state.contacts.items;
+export const selectCatalogSlice = (state) => state.contacts.items;
 export const selectIsLoading = (state) => state.contacts.isLoading;
 export const selectError = (state) => state.contacts.isError;
-export const selectFilter = (state) => state.filters.name; //state.filters
+export const selectFilter = (state) => state.filters;
 
 export const selectFilteredContacts = createSelector(
   [selectContacts, selectFilter],
@@ -54,4 +54,4 @@ export const selectFilteredContacts = createSelector(
   }
 );
 
-export const catalogCampersSliceReducer = contactsSlice.reducer;
+export const catalogSliceReducer = catalogSlice.reducer;
