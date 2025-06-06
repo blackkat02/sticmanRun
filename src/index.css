@@ -4,6 +4,10 @@
   font-weight: 400;
 }
 
+.container {
+  max-width: 1440px;
+}
+
 img {
   background-color: #f0f0f0;
   color: transparent;

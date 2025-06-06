@@ -1,8 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { 
-  getCatalogSliceThunk, 
-  getDetailsCampersSliceThunk
-} from "./contactsOps";
+import { getCatalogSliceThunk, getDetailsCampersSliceThunk} from "./campersOps";
 
 const handlePending = (state) => {
   state.isLoading = true;
@@ -14,8 +11,8 @@ const handleRejected = (state) => {
   state.isError = true;
 };
 
-const catalogCampersSlice = createSlice({
-  name: 'contacts',
+const catalogSlice = createSlice({
+  name: 'campers',
   initialState: {
     items: [],
     isLoading: false,
@@ -39,17 +36,18 @@ const catalogCampersSlice = createSlice({
   },
 });
 
-export const selectCatalogSlice = (state) => state.contacts.items;
-export const selectIsLoading = (state) => state.contacts.isLoading;
-export const selectError = (state) => state.contacts.isError;
+export const selectCatalogSlice = (state) => state.catalog.items;
+export const selectTotalCampersCount = (state) => state.catalog.total; 
+export const selectIsLoading = (state) => state.catalog.isLoading;
+export const selectError = (state) => state.catalog.isError;
 export const selectFilter = (state) => state.filters;
 
-export const selectFilteredContacts = createSelector(
-  [selectContacts, selectFilter],
-  (contacts, filter) => {
+export const selectFilteredCampers = createSelector(
+  [selectCatalog, selectFilter],
+  (catalog, filter) => {
     const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
+    return catalog.filter(camper =>
+      camper.name.toLowerCase().includes(normalizedFilter)
     );
   }
 );
