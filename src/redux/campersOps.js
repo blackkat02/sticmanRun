@@ -4,7 +4,7 @@ import axios from 'axios';
 axios.defaults.baseURL = "https://66b1f8e71ca8ad33d4f5f63e.mockapi.io";
 
 export const getCatalogSliceThunk = createAsyncThunk(
-  'campers/fetchAll',
+  'contacts/fetchAll',
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("/campers");
@@ -17,7 +17,7 @@ export const getCatalogSliceThunk = createAsyncThunk(
 );
 
 export const getDetailsCampersSliceThunk = createAsyncThunk(
-  'campers/fetchDetails',
+  'contacts/fetchDetails',
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`/campers/${id}`);
