@@ -58,3 +58,53 @@
 .searchButton:hover {
   background-color: #45a049;
 }
+
+.filterGroup {
+  display: flex;
+  flex-wrap: wrap; /* Дозволяє елементам переноситися на наступний рядок */
+  gap: 10px; /* Відстань між елементами */
+  justify-content: center; /* Вирівнювання по центру */
+}
+
+.iconLabel {
+  display: flex;
+  flex-direction: column; /* Елементи в стовпчик: іконка, потім текст */
+  align-items: center; /* Вирівнювання по центру по горизонталі */
+  justify-content: center; /* Вирівнювання по центру по вертикалі */
+  padding: 10px 15px; /* Внутрішні відступи */
+  border: 1px solid #d9d9d9; /* Рамка */
+  border-radius: 8px; /* Заокруглені кути */
+  cursor: pointer;
+  min-width: 80px; /* Мінімальна ширина для кращого вигляду */
+  text-align: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.iconLabel.selected {
+  background-color: #e0e0e0; /* Колір фону для вибраних елементів */
+  border-color: #1a1a1a; /* Колір рамки для вибраних елементів */
+}
+
+.iconWrapper {
+  margin-bottom: 5px; /* Відстань між іконкою та текстом */
+  /* Стилі для самої іконки, якщо це SVG або інший компонент */
+  font-size: 24px; /* Приклад розміру іконки */
+}
+
+.hiddenCheckbox,
+.hiddenRadio {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none; /* Гарантуємо, що клік буде по label */
+}
+
+/* Приховати стандартні circle/square на радіо/чекбоксах */
+.filterItem input[type="checkbox"],
+.filterItem input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
