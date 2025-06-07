@@ -15,6 +15,7 @@ const catalogSlice = createSlice({
   name: 'campers',
   initialState: {
     items: [],
+    total: 0,
     isLoading: false,
     isError: false,
   },
@@ -23,7 +24,8 @@ const catalogSlice = createSlice({
       .addCase(getCatalogSliceThunk.pending, handlePending)
       .addCase(getCatalogSliceThunk.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.items = payload;
+        state.items = payload.data;
+        state.total = payload.total;
       })
       .addCase(getCatalogSliceThunk.rejected, handleRejected)
       
@@ -42,14 +44,14 @@ export const selectIsLoading = (state) => state.catalog.isLoading;
 export const selectError = (state) => state.catalog.isError;
 export const selectFilter = (state) => state.filters;
 
-export const selectFilteredCampers = createSelector(
-  [selectCatalog, selectFilter],
-  (catalog, filter) => {
-    const normalizedFilter = filter.toLowerCase();
-    return catalog.filter(camper =>
-      camper.name.toLowerCase().includes(normalizedFilter)
-    );
-  }
-);
+// export const selectFilteredCampers = createSelector(
+//   [selectCatalog, selectFilter],
+//   (catalog, filter) => {
+//     const normalizedFilter = filter.toLowerCase();
+//     return catalog.filter(camper =>
+//       camper.name.toLowerCase().includes(normalizedFilter)
+//     );
+//   }
+// );
 
 export const catalogSliceReducer = catalogSlice.reducer;

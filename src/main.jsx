@@ -1,13 +1,47 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from "react-router-dom";
-import './index.css';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import App from './App';
+import { Provider } from 'react-redux';
+import { store } from './redux/store'; // <-- шлях до вашого Redux store
+import { BrowserRouter } from 'react-router-dom';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>
 );
+
+
+// import { StrictMode } from 'react';
+// import React from 'react';
+// import ReactDOM from 'react-dom/client';
+// import App from './App';
+// import { BrowserRouter } from 'react-router-dom';
+// import './index.css';
+
+// ReactDOM.createRoot(document.getElementById('root')).render(
+//   <React.StrictMode>
+//     <BrowserRouter>
+//       <App />
+//     </BrowserRouter>
+//   </React.StrictMode>
+// );
+
+
+// import { StrictMode } from 'react';
+// import { createRoot } from 'react-dom/client';
+// import { BrowserRouter } from "react-router-dom";
+// import './index.css';
+// import App from './App';
+
+// createRoot(document.getElementById('root')).render(
+//   <StrictMode>
+//     <BrowserRouter>
+//       <App />
+//     </BrowserRouter>
+//   </StrictMode>
+// );

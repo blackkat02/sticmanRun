@@ -5,8 +5,8 @@ import styles from './CatalogPage.module.css';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  selectCatalogItems,
-  selectTotalCampersCount,
+  selectCatalogSlice,
+  // selectTotalCampersCount,
   selectIsLoading,
   selectError,
 } from '../../redux/catalogSlice'
@@ -14,8 +14,8 @@ import { getCatalogSliceThunk } from '../../redux/campersOps';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
-  const catalog = useSelector(selectCatalogItems);
-  const totalCount = useSelector(selectTotalCampersCount);
+  const catalog = useSelector(selectCatalogSlice);
+  // const totalCount = useSelector(selectTotalCampersCount);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
 

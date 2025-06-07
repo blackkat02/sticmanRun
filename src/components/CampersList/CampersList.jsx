@@ -1,12 +1,14 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { selectFilteredCampers } from '../../redux/catalogSlice';
+// import { selectFilteredCampers } from '../../redux/catalogSlice';
+import { selectCatalogSlice } from '../../redux/catalogSlice';
 import CamperCard from '../CamperCard/CamperCard';
 import styles from './CampersList.module.css';
 
-const CampersList = ({ campers }) => {
+const CampersList = () => {
   const location = useLocation();
-  const filteredCampers = useSelector(selectFilteredCampers);
+  // const filteredCampers = useSelector(selectFilteredCampers);
+  const filteredCampers = useSelector(selectCatalogSlice);
   const displayedCampers = filteredCampers || campers;
 
   return (

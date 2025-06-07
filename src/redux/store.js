@@ -3,7 +3,7 @@ import { catalogSliceReducer } from './catalogSlice';
 import filtersSliceReducer from './filtersSlice';
 
 const rootReducer = combineReducers({
-  contacts: catalogSliceReducer,
+  catalog: catalogSliceReducer,
   filters: filtersSliceReducer,
 });
 
