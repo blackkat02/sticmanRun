@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { getCatalogSliceThunk, getDetailsCampersSliceThunk} from "./campersOps";
+import { getCatalogSliceThunk, getDetailsCampersSliceThunk } from "./campersOps"; 
 
 const handlePending = (state) => {
   state.isLoading = true;
@@ -9,6 +9,8 @@ const handlePending = (state) => {
 const handleRejected = (state) => {
   state.isLoading = false;
   state.isError = true;
+  state.items = [];
+  state.total = 0;
 };
 
 const catalogSlice = createSlice({
@@ -24,11 +26,11 @@ const catalogSlice = createSlice({
       .addCase(getCatalogSliceThunk.pending, handlePending)
       .addCase(getCatalogSliceThunk.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.items = payload.data;
+        state.items = payload.items;
         state.total = payload.total;
       })
       .addCase(getCatalogSliceThunk.rejected, handleRejected)
-      
+
       .addCase(getDetailsCampersSliceThunk.pending, handlePending)
       .addCase(getDetailsCampersSliceThunk.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -38,20 +40,8 @@ const catalogSlice = createSlice({
   },
 });
 
-export const selectCatalogSlice = (state) => state.catalog.items;
-export const selectTotalCampersCount = (state) => state.catalog.total; 
+export const selectCatalogSlice = (state) => state.catalog.items; // Повертає список кемперів
+export const selectTotalCampersCount = (state) => state.catalog.total; // Повертає загальну кількість
 export const selectIsLoading = (state) => state.catalog.isLoading;
 export const selectError = (state) => state.catalog.isError;
-export const selectFilter = (state) => state.filters;
-
-// export const selectFilteredCampers = createSelector(
-//   [selectCatalog, selectFilter],
-//   (catalog, filter) => {
-//     const normalizedFilter = filter.toLowerCase();
-//     return catalog.filter(camper =>
-//       camper.name.toLowerCase().includes(normalizedFilter)
-//     );
-//   }
-// );
-
 export const catalogSliceReducer = catalogSlice.reducer;
