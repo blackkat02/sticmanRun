@@ -1,22 +1,26 @@
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { selectVisibleItems } from '../../redux/catalogSlice';
 import CamperCard from '../CamperCard/CamperCard';
 import styles from './CampersList.module.css';
 
-// CampersList now receives the already filtered/paginated 'campers' as a prop
-const CampersList = ({ campers }) => {
+const CampersList = () => {
   const location = useLocation();
+  const campers = useSelector(selectVisibleItems);
 
   return (
     <div className={styles.container}>
-      {Array.isArray(campers) && campers.length > 0 ? ( // Check if campers is an array and not empty
+      {campers.length > 0 ? (
         <ul className={styles.list}>
           {campers.map(camper => (
-            // Ensure camper.id or camper._id is unique for the key
-            <CamperCard key={camper._id || camper.id} camper={camper} location={location} />
+            <CamperCard 
+              key={camper._id || camper.id} 
+              camper={camper} 
+              location={location} 
+            />
           ))}
         </ul>
       ) : (
-        // Message when no campers are found (e.g., due to filters or initial empty state)
         <p className={styles.emptyMessage}>No campers found.</p>
       )}
     </div>
