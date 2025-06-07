@@ -114,19 +114,22 @@ const CamperCard = ({ camper, location }) => {
         
         <p className={styles.descriptionText}>{description}</p>
 
-        {/* Деталі обладнання */}
+                {/* Деталі обладнання */}
         <div className={styles.detailsList}>
-          {/* Тут використовуємо AC, bathroom, kitchen, TV напряму з об'єкта camper */}
           {AC && <span className={styles.detailItem}>AC</span>}
-          {transmission === 'automatic' && <span className={styles.detailItem}>Automatic</span>} {/* Transmission */}
+          {transmission === 'automatic' && <span className={styles.detailItem}>Automatic</span>}
           {kitchen && <span className={styles.detailItem}>Kitchen</span>}
           {TV && <span className={styles.detailItem}>TV</span>}
           {bathroom && <span className={styles.detailItem}>Bathroom</span>}
-          {/* Додайте інші поля, якщо вони є у вашому об'єкті кемпера */}
-          {/* Приклад використання `details` якщо воно все ж є і містить `beds` */}
+          {radio && <span className={styles.detailItem}>Radio</span>} {/* Додано */}
+          {refrigerator && <span className={styles.detailItem}>Refrigerator</span>} {/* Додано */}
+          {microwave && <span className={styles.detailItem}>Microwave</span>} {/* Додано */}
+          {gas && <span className={styles.detailItem}>Gas</span>} {/* Додано */}
+          {water && <span className={styles.detailItem}>Water</span>} {/* Додано */}
           {camper.details?.beds && <span className={styles.detailItem}>{camper.details.beds} beds</span>}
-          <span className={styles.detailItem}>{vehicleTypeDisplay}</span> {/* Тип ТЗ */}
+          <span className={styles.detailItem}>{vehicleTypeDisplay}</span>
         </div>
+
       </div>
     </li>
   );
