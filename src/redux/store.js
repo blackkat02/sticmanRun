@@ -2,8 +2,8 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { catalogSliceReducer } from './catalogSlice';
 import {
   persistedFavoritesReducer,
-  selectFavoriteItems as importedSelectFavoriteItems // <--- Імпортуємо його з favoriteSlice
-} from './favoriteSlice'; // <--- Звідси
+  selectFavoriteItems as importedSelectFavoriteItems 
+} from './favoriteSlice'; 
 import {
   persistStore,
   FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER,
@@ -26,14 +26,7 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
-export const selectFavoriteItems = importedSelectFavoriteItems; // <--- Ре-експортуємо його
-
-// Якщо ви експортуєте селектори з store.js, краще імпортувати їх тут і потім експортувати.
-// Наприклад, якщо selectFavoriteItems використовується в багатьох місцях,
-// його зручно експортувати звідси.
-// import { selectFavoriteItems as importedSelectFavoriteItems } from './favoriteSlice';
-// export const selectFavoriteItems = importedSelectFavoriteItems;
-
+export const selectFavoriteItems = importedSelectFavoriteItems;
 
 // import { configureStore, combineReducers  } from '@reduxjs/toolkit';
 // import { catalogSliceReducer } from './catalogSlice';

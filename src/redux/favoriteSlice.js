@@ -1,22 +1,19 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // Використовуємо localStorage за замовчуванням
+import storage from 'redux-persist/lib/storage'; 
 
 const favoriteSlice = createSlice({
   name: 'favorites',
   initialState: {
-    items: [], // Масив ID обраних кемперів
+    items: [], 
   },
   reducers: {
-    // Додає ID кемпера до обраних
     addToFavorites(state, action) {
       const camperId = action.payload;
-      // Перевіряємо, чи ID ще не в обраних
       if (!state.items.includes(camperId)) {
         state.items.push(camperId);
       }
     },
-    // Видаляє ID кемпера з обраних
     removeFromFavorites(state, action) {
       const camperId = action.payload;
       state.items = state.items.filter(id => id !== camperId);
@@ -24,17 +21,13 @@ const favoriteSlice = createSlice({
   },
 });
 
-// Експортуємо екшени
 export const { addToFavorites, removeFromFavorites } = favoriteSlice.actions;
 
-// Селектор для отримання масиву ID обраних кемперів
 export const selectFavoriteItems = (state) => state.favorites.items;
 
-// Конфігурація для redux-persist
 const persistConfig = {
-  key: 'favorites', // Ключ для localStorage
-  storage, // Використовуємо localStorage
+  key: 'favorites', 
+  storage, 
 };
 
-// Створюємо persistReducer
 export const persistedFavoritesReducer = persistReducer(persistConfig, favoriteSlice.reducer);
