@@ -147,3 +147,107 @@
   color: #555;
   margin: 0;
 }
+
+
+/* CamperCard.module.css */
+
+.item {
+  position: relative; /* Щоб кнопка favoritesButton позиціонувалася відносно картки */
+  /* ... інші стилі для елемента li */
+}
+
+.imageContainer {
+  position: relative; /* Контейнер для зображення та кнопки */
+  /* ... інші стилі для imageContainer */
+}
+
+.favoriteButton {
+  position: absolute;
+  top: 10px; /* Відступ зверху */
+  right: 10px; /* Відступ справа */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* Розмір іконки */
+  z-index: 10; /* Перекриває зображення */
+  padding: 0;
+  color: lightgray; /* Колір неактивного сердечка */
+  transition: color 0.2s ease-in-out;
+}
+
+.favoriteButton.favorite {
+  color: red; /* Колір активного сердечка */
+}
+
+/* Додаткові покращення для infoWrapper та деталей */
+.infoWrapper {
+    padding: 10px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Вирівнюємо по верху */
+    margin-bottom: 10px;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    flex-grow: 1; /* Дозволяє займати доступний простір */
+}
+
+.priceAndRating {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px; /* Простір між елементами */
+    margin-left: 10px; /* Відступ від назви */
+}
+
+.price {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.rating, .location {
+    font-size: 14px;
+    display: flex; /* Для вирівнювання іконки та тексту */
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+}
+
+.starIcon, .mapPinIcon {
+    font-size: 16px; /* Розмір іконки */
+}
+
+.descriptionText {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Обмежує текст двома рядками */
+    -webkit-box-orient: vertical;
+}
+
+.detailsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* Простір між елементами деталей */
+    margin-top: 10px;
+}
+
+.detailItem {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #333;
+    white-space: nowrap; /* Запобігає переносу тексту всередині елемента */
+}
