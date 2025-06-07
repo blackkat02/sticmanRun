@@ -42,46 +42,55 @@ const CamperCard = ({ camper, location }) => {
 
   return (
     <li className={styles.item}>
-      <Link 
-        to={`/campers/${_id}`} // Використовуємо _id для маршрутизації
-        state={{ 
-          from: `${location.pathname}${location.search}`
-        }}
-        className={styles.link}
-      >
-        {/* Відображення зображення */}
-        {gallery.length > 0 && (
-          <img src={gallery[0].original || gallery[0].thumb} alt={name} className={styles.camperImage} />
-        )}
+      <div className={styles.imageContainer}>
+        <Link
+          to={`/campers/${_id}`}
+          state={{ from: `${location.pathname}${location.search}` }}
+          className={styles.link}
+        >
+          {gallery.length > 0 && (
+            <div className={styles.imageWrapper}>
+              <img
+                src={gallery[0].original || gallery[0].thumb}
+                alt={`${name} thumbnail`}
+                className={styles.camperImage}
+              />
+            </div>
+          )}
+        </Link>
+      </div>
 
-        <h3>{name}</h3>
-        <p>Ціна: ${price}</p>
-        <p>Рейтинг: {rating} ({reviews.length} відгуків)</p>
-        <p>Локація: {camperLocation}</p>
-        <p className={styles.descriptionText}>{description}</p>
-        <p>Тип: {vehicleTypeDisplay}</p>
-        <p>Трансмісія: {transmission}</p>
-        <p>Двигун: {engine}</p>
-        
-        {/* Деталі обладнання з об'єкта details */}
-        <div className={styles.detailsList}>
-          {details.kitchen && <span className={styles.detailItem}>Кухня</span>}
-          {details.airConditioner && <span className={styles.detailItem}>Кондиціонер</span>}
-          {details.bathroom && <span className={styles.detailItem}>Ванна</span>}
-          {details.beds && <span className={styles.detailItem}>{details.beds} ліжок</span>}
-          {details.TV && <span className={styles.detailItem}>TV</span>}
-          {details.radio && <span className={styles.detailItem}>Радіо</span>}
-          {details.refrigerator && <span className={styles.detailItem}>Холодильник</span>}
-          {details.microwave && <span className={styles.detailItem}>Мікрохвильовка</span>}
-          {details.gas && <span className={styles.detailItem}>Газ</span>}
-          {details.water && <span className={styles.detailItem}>Вода</span>}
-          {/* Примітка: 'automatic' у FilterBar відповідає camper.transmission,
+      <h3>{name}</h3>
+      <p>Ціна: ${price}</p>
+      <p>Рейтинг: {rating} ({reviews.length} відгуків)</p>
+      <p>Локація: {camperLocation}</p>
+      <p className={styles.descriptionText}>{description}</p>
+      <p>Тип: {vehicleTypeDisplay}</p>
+      <p>Трансмісія: {transmission}</p>
+      <p>Двигун: {engine}</p>
+
+      {/* Деталі обладнання з об'єкта details */}
+      <div className={styles.detailsList}>
+        {details.kitchen && <span className={styles.detailItem}>Кухня</span>}
+        {details.airConditioner && <span className={styles.detailItem}>Кондиціонер</span>}
+        {details.bathroom && <span className={styles.detailItem}>Ванна</span>}
+        {details.beds && <span className={styles.detailItem}>{details.beds} ліжок</span>}
+        {details.TV && <span className={styles.detailItem}>TV</span>}
+        {details.radio && <span className={styles.detailItem}>Радіо</span>}
+        {details.refrigerator && <span className={styles.detailItem}>Холодильник</span>}
+        {details.microwave && <span className={styles.detailItem}>Мікрохвильовка</span>}
+        {details.gas && <span className={styles.detailItem}>Газ</span>}
+        {details.water && <span className={styles.detailItem}>Вода</span>}
+        {/* Примітка: 'automatic' у FilterBar відповідає camper.transmission,
               тому ми не шукаємо його в details тут. */}
-        </div>
-      </Link>
-      {/* Кнопка "Show More" або інша дія */}
-      {/* <button className={styles.showMoreButton}>Показати більше</button> */}
-    </li>
+      </div>
+      {/* <NavLink
+        to="/campers"
+
+      >
+        Show more
+      </NavLink> */}
+    </li >
   );
 };
 
@@ -130,19 +139,19 @@ export default CamperCard;
 
 //       <div className="camper-thumbnail">
 //         {gallery.length > 0 && (
-//           <img 
-//             src={gallery[0].thumb} 
-//             alt={`${name} main view`} 
+//           <img
+//             src={gallery[0].thumb}
+//             alt={`${name} main view`}
 //             className="thumbnail-image"
 //           />
 //         )}
 //       </div>
 //       {/* <div className="camper-gallery">
 //         {gallery.map((img, index) => (
-//           <img 
-//             key={index} 
-//             src={img.thumb} 
-//             alt={`${name} view ${index + 1}`} 
+//           <img
+//             key={index}
+//             src={img.thumb}
+//             alt={`${name} view ${index + 1}`}
 //             className="gallery-thumb"
 //           />
 //         ))}
@@ -171,9 +180,9 @@ export default CamperCard;
 //         </div>
 //       </div>
 
-//       <NavLink 
-//         to="/campers/:id" 
-//         // className={({ isActive }) => 
+//       <NavLink
+//         to="/campers/:id"
+//         // className={({ isActive }) =>
 //         //   isActive ? `${css.link} ${css.active}` : css.link
 //         // }
 //       >
@@ -253,9 +262,9 @@ export default CamperCard;
 
 //   return (
 //     <li className={styles.item}>
-//       <Link 
+//       <Link
 //         to={`/campers/${id}`}
-//         state={{ 
+//         state={{
 //           from: `${location.pathname}${location.search}`
 //         }}
 //         className={styles.link}

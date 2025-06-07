@@ -1,3 +1,36 @@
+.imageContainer {
+  flex: 0 0 292px; /* Фіксована ширина для флекс-елемента */
+  margin-right: 20px; /* Відступ від інших елементів */
+}
+
+.link {
+  display: block;
+  height: 100%;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 66.67%; /* Співвідношення 3:2 (200/300) */
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.camperImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.camperImage:hover {
+  transform: scale(1.05);
+}
+
 .camper-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -34,6 +67,11 @@
 .rating {
   color: #ffc107;
   font-weight: bold;
+}
+
+.link {
+  max-width: 292px;
+  max-height: 320px;
 }
 
 .camper-description {

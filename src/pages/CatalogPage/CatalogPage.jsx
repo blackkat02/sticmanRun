@@ -8,17 +8,17 @@ import {
   loadMoreItems,      // Екшен для завантаження наступної порції
   resetCatalogState,  // Екшен для повного скидання стану каталогу
 } from '../../redux/catalogSlice';
-import { getCatalogSliceThunk } from '../../redux/campersOps'; 
-import FilterBar from '../../components/FilterBar/FilterBar'; 
+import { getCatalogSliceThunk } from '../../redux/campersOps';
+import FilterBar from '../../components/FilterBar/FilterBar';
 import CampersList from '../../components/CampersList/CampersList';
 import styles from './CatalogPage.module.css';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
   // Отримуємо кемперів, які вже відфільтровані та пагіновані
-  const campers = useSelector(selectVisibleItems); 
+  const campers = useSelector(selectVisibleItems);
   // Визначаємо, чи потрібно показувати кнопку "Load More"
-  const shouldShowLoadMore = useSelector(selectLoadMore); 
+  const shouldShowLoadMore = useSelector(selectLoadMore);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
 
@@ -45,7 +45,7 @@ const CatalogPage = () => {
   if (error) {
     return <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>Помилка: Не вдалося завантажити кемпери.</div>;
   }
-  
+
   // Відображення повідомлення, якщо кемперів не знайдено (після завантаження та фільтрації)
   if (!isLoading && campers.length === 0 && !shouldShowLoadMore) {
     return <div style={{ textAlign: 'center', padding: '20px' }}>Кемперів не знайдено.</div>;
@@ -54,13 +54,15 @@ const CatalogPage = () => {
   return (
     <section>
       <div className={styles.container}>
-        <FilterBar /> {/* FilterBar тепер сам керує своїми фільтрами через Redux */}
-        <CampersList campers={campers} /> {/* CampersList отримує вже відфільтровані та пагіновані кемпери */}
-        
+        <div className={styles.bar}>
+          <FilterBar /> {/* FilterBar тепер сам керує своїми фільтрами через Redux */}
+          <CampersList campers={campers} /> {/* CampersList отримує вже відфільтровані та пагіновані кемпери */}
+        </div>
+
         {/* Кнопка "Завантажити ще" */}
         {shouldShowLoadMore && ( // Кнопка видима, якщо є ще елементи для завантаження
           <div className={styles.loadMoreWrapper}>
-            <button 
+            <button
               className={styles.loadMoreButton}
               onClick={handleLoadMore}
             >

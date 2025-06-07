@@ -16,6 +16,8 @@ const CampersList = ({ campers }) => {
             <CamperCard key={camper._id || camper.id} camper={camper} location={location} />
           ))}
         </ul>
+        
+        
       ) : (
         <p className={styles.emptyMessage}>Кемперів не знайдено.</p>
       )}
