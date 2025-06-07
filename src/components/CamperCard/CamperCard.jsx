@@ -83,7 +83,7 @@ const CamperCard = ({ camper }) => {
       </div>
 
       <NavLink 
-        to="/" 
+        to="/campers/:id" 
         // className={({ isActive }) => 
         //   isActive ? `${css.link} ${css.active}` : css.link
         // }
