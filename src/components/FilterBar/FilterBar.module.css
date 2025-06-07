@@ -101,7 +101,6 @@
   pointer-events: none; /* Гарантуємо, що клік буде по label */
 }
 
-/* Приховати стандартні circle/square на радіо/чекбоксах */
 .filterItem input[type="checkbox"],
 .filterItem input[type="radio"] {
   -webkit-appearance: none;

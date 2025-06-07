@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setFilters,
-  resetFilters,
+  // resetFilters, // Цей екшен більше не імпортуємо, оскільки кнопки "Reset" не буде
   selectCurrentFilters,
 } from '../../redux/catalogSlice';
 import styles from './FilterBar.module.css';
@@ -30,19 +30,17 @@ const FilterBar = () => {
       TV: false,
       bathroom: false,
     },
-    vehicleType: '', // Змінено на рядок для зберігання вибраного типу ТЗ (або порожній рядок для жодного)
+    vehicleType: '',
   });
 
-  // Синхронізуємо локальний стан з Redux при зміні Redux фільтрів
   useEffect(() => {
-    // Для vehicleType потрібно конвертувати об'єкт { van: true, alcove: false } в рядок 'van'
     const selectedVehicleTypeKey = Object.keys(currentReduxFilters.vehicleType).find(
       (key) => currentReduxFilters.vehicleType[key]
     );
 
     setLocalFilters({
       ...currentReduxFilters,
-      vehicleType: selectedVehicleTypeKey || '', // Якщо нічого не вибрано, ставимо порожній рядок
+      vehicleType: selectedVehicleTypeKey || '',
     });
   }, [currentReduxFilters]);
 
@@ -55,16 +53,13 @@ const FilterBar = () => {
       ...prev,
       equipment: {
         ...prev.equipment,
-        [name]: !prev.equipment[name], // Перемикаємо стан
+        [name]: !prev.equipment[name],
       },
     }));
   };
 
-  // Оновлена логіка для Vehicle Type: тепер це поводиться як радіо-група,
-  // але з можливістю зняти вибір, якщо натиснути на вже вибраний елемент.
   const handleVehicleTypeChange = (name) => {
     setLocalFilters((prev) => {
-      // Якщо натиснуто на вже вибраний тип, деактивуємо його (встановлюємо порожній рядок)
       const newVehicleType = prev.vehicleType === name ? '' : name;
       return {
         ...prev,
@@ -74,8 +69,6 @@ const FilterBar = () => {
   };
 
   const handleSearch = () => {
-    // Перед відправкою до Redux, конвертуємо localFilters.vehicleType (рядок)
-    // назад в об'єкт булевих значень, щоб він відповідав структурі Redux.
     const reduxVehicleType = {
       van: false,
       fullyIntegrated: false,
@@ -89,14 +82,12 @@ const FilterBar = () => {
       setFilters({
         location: localFilters.location,
         equipment: localFilters.equipment,
-        vehicleType: reduxVehicleType, // Передаємо конвертований об'єкт
+        vehicleType: reduxVehicleType,
       })
     );
   };
 
-  const handleReset = () => {
-    dispatch(resetFilters());
-  };
+  // handleReset функція та кнопка видалені
 
   return (
     <div className={styles.filterBar}>
@@ -131,11 +122,11 @@ const FilterBar = () => {
                 id={item.id}
                 checked={localFilters.equipment[item.name]}
                 onChange={() => handleEquipmentChange(item.name)}
-                className={styles.hiddenCheckbox} // Приховати стандартний чекбокс
+                className={styles.hiddenCheckbox}
                 aria-label={`Filter by ${item.label}`}
               />
               <div className={styles.iconWrapper}>
-                {item.icon} {/* Місце для вашої іконки */}
+                {item.icon}
                 <span>{item.label}</span>
               </div>
             </label>
@@ -147,25 +138,25 @@ const FilterBar = () => {
         <h3 className={styles.sectionTitle}>Vehicle type</h3>
         <div className={styles.filterGroup} role="group" aria-labelledby="vehicle-type-heading">
           {[
-            { id: 'van', label: 'Van', name: 'van', icon: <i></i> }, // Додайте `<VanIcon />`
-            { id: 'fully-integrated', label: 'Fully Integrated', name: 'fullyIntegrated', icon: <i></i> }, // Додайте `<FullyIntegratedIcon />`
-            { id: 'alcove', label: 'Alcove', name: 'alcove', icon: <i></i> }, // Додайте `<AlcoveIcon />`
+            { id: 'van', label: 'Van', name: 'van', icon: <i></i> },
+            { id: 'fully-integrated', label: 'Fully Integrated', name: 'fullyIntegrated', icon: <i></i> },
+            { id: 'alcove', label: 'Alcove', name: 'alcove', icon: <i></i> },
           ].map((item) => (
             <label
               key={item.id}
               className={`${styles.filterItem} ${styles.iconLabel} ${localFilters.vehicleType === item.name ? styles.selected : ''}`}
             >
               <input
-                type="radio" // Змінено на radio
-                name="vehicleType" // Всі radio buttons в одній групі мають однаковий name
+                type="radio"
+                name="vehicleType"
                 id={item.id}
-                checked={localFilters.vehicleType === item.name} // Перевіряємо, чи цей тип вибраний
+                checked={localFilters.vehicleType === item.name}
                 onChange={() => handleVehicleTypeChange(item.name)}
-                className={styles.hiddenRadio} // Приховати стандартний радіо
+                className={styles.hiddenRadio}
                 aria-label={`Filter by ${item.label}`}
               />
               <div className={styles.iconWrapper}>
-                {item.icon} {/* Місце для вашої іконки */}
+                {item.icon}
                 <span>{item.label}</span>
               </div>
             </label>
@@ -177,9 +168,7 @@ const FilterBar = () => {
         <button type="button" className={styles.searchButton} aria-label="Apply filters" onClick={handleSearch}>
           Search
         </button>
-        <button type="button" className={styles.resetButton} aria-label="Reset filters" onClick={handleReset}>
-          Reset
-        </button>
+        {/* Кнопка "Reset" видалена */}
       </section>
     </div>
   );
