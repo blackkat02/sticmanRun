@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setFilters,
-  // resetFilters, // Цей екшен більше не імпортуємо, оскільки кнопки "Reset" не буде
   selectCurrentFilters,
 } from '../../redux/catalogSlice';
 import styles from './FilterBar.module.css';
 
-// Приклади імпорту іконок (ЗАМІНІТЬ НА ВАШІ РЕАЛЬНІ ІКОНКИ)
+// Приклади імпорту іконок (ЗАМІНИТИ НА РЕАЛЬНІ ІКОНКИ)
 // import { ReactComponent as AcIcon } from '../../assets/icons/ac.svg';
 // import { ReactComponent as AutomaticIcon } from '../../assets/icons/automatic.svg';
 // import { ReactComponent as KitchenIcon } from '../../assets/icons/kitchen.svg';
@@ -86,8 +85,6 @@ const FilterBar = () => {
       })
     );
   };
-
-  // handleReset функція та кнопка видалені
 
   return (
     <div className={styles.filterBar}>
@@ -168,7 +165,6 @@ const FilterBar = () => {
         <button type="button" className={styles.searchButton} aria-label="Apply filters" onClick={handleSearch}>
           Search
         </button>
-        {/* Кнопка "Reset" видалена */}
       </section>
     </div>
   );

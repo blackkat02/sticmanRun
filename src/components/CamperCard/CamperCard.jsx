@@ -1,13 +1,13 @@
-import React from 'react'; 
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; 
-import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice'; 
-import { selectFavoriteItems } from '../../redux/store'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice';
+import { selectFavoriteItems } from '../../redux/store';
 import styles from './CamperCard.module.css';
 
-const CamperCard = ({ camper, location }) => {
+const CamperCard = ({ camper }) => {
   const dispatch = useDispatch();
-  const favoriteItems = useSelector(selectFavoriteItems); 
+  const favoriteItems = useSelector(selectFavoriteItems);
 
   const {
     id,
@@ -25,27 +25,26 @@ const CamperCard = ({ camper, location }) => {
     consumption,
     transmission,
     engine,
-
     AC,
-    bathroom, 
-    kitchen, 
-    TV, 
-    radio, 
+    bathroom,
+    kitchen,
+    TV,
+    radio,
     refrigerator,
     microwave,
-    gas, 
+    gas,
     water,
     gallery = [],
   } = camper;
 
-  const isFavorite = favoriteItems.includes(camper.id);
+  const isFavorite = favoriteItems.includes(id);
 
   const handleToggleFavorite = (e) => {
     e.preventDefault();
     if (isFavorite) {
-      dispatch(removeFromFavorites(camper.id));
+      dispatch(removeFromFavorites(id));
     } else {
-      dispatch(addToFavorites(camper.id));
+      dispatch(addToFavorites(id));
     }
   };
 
@@ -68,9 +67,8 @@ const CamperCard = ({ camper, location }) => {
     <li className={styles.item}>
       <div className={styles.imageContainer}>
         <Link
-          to={`/campers/${id}`}
-          state={{ from: `${location.pathname}${location.search}` }}
-          className={styles.link}
+          to={`/campers/${id}`} // <--- Видалено state={{ from: ... }}
+          className={styles.imageLink}
         >
           {gallery.length > 0 && (
             <div className={styles.imageWrapper}>
@@ -88,11 +86,11 @@ const CamperCard = ({ camper, location }) => {
           className={`${styles.favoriteButton} ${isFavorite ? styles.favorite : ''}`}
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
-          {isFavorite ? '❤️' : '🤍'} 
+          {isFavorite ? '❤️' : '🤍'}
         </button>
       </div>
 
-      <div className={styles.infoWrapper}> 
+      <div className={styles.infoWrapper}>
         <div className={styles.header}>
             <h3 className={styles.name}>{name}</h3>
             <div className={styles.priceAndRating}>
@@ -101,7 +99,7 @@ const CamperCard = ({ camper, location }) => {
                 <p className={styles.location}><span className={styles.mapPinIcon}>📍</span> {camperLocation}</p>
             </div>
         </div>
-        
+
         <p className={styles.descriptionText}>{description}</p>
 
         <div className={styles.detailsList}>
@@ -119,6 +117,12 @@ const CamperCard = ({ camper, location }) => {
           <span className={styles.detailItem}>{vehicleTypeDisplay}</span>
         </div>
 
+        <Link
+          to={`/campers/${id}`} 
+          className={styles.showMoreButton}
+        >
+          Show more
+        </Link>
       </div>
     </li>
   );

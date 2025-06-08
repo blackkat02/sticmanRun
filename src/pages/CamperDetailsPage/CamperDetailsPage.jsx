@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, NavLink, Outlet } from 'react-router-dom'; // <--- Додано NavLink, Outlet
 import { useDispatch, useSelector } from 'react-redux';
-import { getDetailsCampersSliceThunk, clearSelectedCamper } from '../../redux/catalogSlice';
+import { getCatalogSliceThunk, getDetailsCampersSliceThunk } from '../../redux/campersOps';
+import { clearSelectedCamper } from '../../redux/catalogSlice';
 import { selectSelectedCamper, selectIsLoading, selectError } from '../../redux/catalogSlice';
 import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice';
 import { selectFavoriteItems } from '../../redux/store'; 
 import styles from './CamperDetailsPage.module.css'; 
 import BookingForm from '../../components/BookingForm/BookingForm'; 
-import ReviewsList from '../../components/ReviewsList/ReviewsList'; 
 
 const Icon = ({ name }) => {
   const getIcon = (iconName) => {
@@ -26,7 +26,7 @@ const Icon = ({ name }) => {
       case 'length': return '📏';
       case 'width': return '↔️';
       case 'height': return '↕️';
-      case 'tank': return '💧'; // Or another icon for tank
+      case 'tank': return '💧'; 
       case 'consumption': return '📊';
       case 'beds': return '🛏️';
       case 'form': return '🚐';
@@ -36,19 +36,17 @@ const Icon = ({ name }) => {
   return <span className={styles.iconPlaceholder}>{getIcon(name)}</span>;
 };
 
+
 const CamperDetailsPage = () => {
-  const { camperId } = useParams(); // Get ID from URL
+  const { camperId } = useParams(); 
   const dispatch = useDispatch();
-  const location = useLocation(); // Used for back navigation if needed
 
   const camper = useSelector(selectSelectedCamper);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
   const favoriteItems = useSelector(selectFavoriteItems);
 
-  const isFavorite = camper ? favoriteItems.includes(camper._id || camper.id) : false; // Handle _id or id
-
-  const [activeTab, setActiveTab] = useState('features'); // State for tabs: 'features' or 'reviews'
+  const isFavorite = camper ? favoriteItems.includes(camper._id || camper.id) : false; 
 
   useEffect(() => {
     dispatch(getDetailsCampersSliceThunk(camperId));
@@ -79,49 +77,6 @@ const CamperDetailsPage = () => {
   if (!camper) {
     return <div className={styles.notFound}>Кемпер не знайдено.</div>;
   }
-
-  // Determine vehicle type for display
-  let vehicleTypeDisplay = '';
-  switch (camper.form) {
-    case 'panelTruck':
-      vehicleTypeDisplay = 'Фургон';
-      break;
-    case 'fullyIntegrated':
-      vehicleTypeDisplay = 'Інтегрований';
-      break;
-    case 'alcove':
-      vehicleTypeDisplay = 'Альков';
-      break;
-    default:
-      vehicleTypeDisplay = camper.form;
-  }
-
-  // Collect characteristics (equipment) for display
-  const characteristics = [
-    camper.transmission === 'automatic' && { label: 'Automatic', icon: 'transmission' },
-    camper.engine && { label: camper.engine.charAt(0).toUpperCase() + camper.engine.slice(1), icon: 'engine' },
-    camper.AC && { label: 'AC', icon: 'AC' },
-    camper.bathroom && { label: 'Bathroom', icon: 'bathroom' },
-    camper.kitchen && { label: 'Kitchen', icon: 'kitchen' },
-    camper.TV && { label: 'TV', icon: 'TV' },
-    camper.radio && { label: 'Radio', icon: 'radio' },
-    camper.refrigerator && { label: 'Refrigerator', icon: 'refrigerator' },
-    camper.microwave && { label: 'Microwave', icon: 'microwave' },
-    camper.gas && { label: 'Gas', icon: 'gas' },
-    camper.water && { label: 'Water', icon: 'water' },
-    camper.details?.beds && { label: `${camper.details.beds} beds`, icon: 'beds' },
-    camper.form && { label: vehicleTypeDisplay, icon: 'form' },
-  ].filter(Boolean); // Remove falsy values
-
-  // Collect details for display
-  const details = [
-    camper.length && { label: `Length: ${camper.length}`, icon: 'length' },
-    camper.width && { label: `Width: ${camper.width}`, icon: 'width' },
-    camper.height && { label: `Height: ${camper.height}`, icon: 'height' },
-    camper.tank && { label: `Tank: ${camper.tank}`, icon: 'tank' },
-    camper.consumption && { label: `Consumption: ${camper.consumption}`, icon: 'consumption' },
-  ].filter(Boolean);
-
 
   return (
     <div className={styles.detailsPageContainer}>
@@ -156,51 +111,24 @@ const CamperDetailsPage = () => {
       <p className={styles.description}>{camper.description}</p>
 
       <div className={styles.tabs}>
-        <button
-          className={`${styles.tabButton} ${activeTab === 'features' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('features')}
+        <NavLink
+          to="features" 
+          className={({ isActive }) => (isActive ? styles.tabButtonActive : styles.tabButton)}
         >
           Features
-        </button>
-        <button
-          className={`${styles.tabButton} ${activeTab === 'reviews' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('reviews')}
+        </NavLink>
+        <NavLink
+          to="reviews" 
+          className={({ isActive }) => (isActive ? styles.tabButtonActive : styles.tabButton)}
         >
           Reviews
-        </button>
+        </NavLink>
       </div>
 
       <div className={styles.tabContent}>
-        {activeTab === 'features' && (
-          <div className={styles.featuresContent}>
-            <div className={styles.characteristicsSection}>
-              <h3 className={styles.sectionTitle}>Vehicle Characteristics</h3>
-              <ul className={styles.characteristicsList}>
-                {characteristics.map((char, index) => (
-                  <li key={index} className={styles.characteristicItem}>
-                    <Icon name={char.icon} /> {char.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className={styles.detailsSection}>
-              <h3 className={styles.sectionTitle}>Details</h3>
-              <ul className={styles.detailsSpecsList}>
-                {details.map((detail, index) => (
-                  <li key={index} className={styles.detailSpecItem}>
-                    <Icon name={detail.icon} /> {detail.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'reviews' && (
-          <div className={styles.reviewsContent}>
-            <ReviewsList reviews={camper.reviews} />
-          </div>
-        )}
+        <div className={styles.mainContent}>
+            <Outlet context={{ camper }} /> 
+        </div>
 
         <div className={styles.bookingFormSection}>
           <BookingForm />

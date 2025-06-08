@@ -2,11 +2,11 @@ import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectVisibleItems,
-  selectLoadMore, 
-  selectIsLoading, 
-  selectError,   
-  loadMoreItems, 
-  resetCatalogState, 
+  selectLoadMore,
+  selectIsLoading,
+  selectError,
+  loadMoreItems,
+  resetCatalogState,
 } from '../../redux/catalogSlice';
 import { getCatalogSliceThunk } from '../../redux/campersOps';
 import FilterBar from '../../components/FilterBar/FilterBar';
@@ -22,49 +22,51 @@ const CatalogPage = () => {
 
   useEffect(() => {
     dispatch(resetCatalogState());
-    dispatch(getCatalogSliceThunk()); 
+    dispatch(getCatalogSliceThunk());
   }, [dispatch]);
 
   const handleLoadMore = useCallback(() => {
     if (shouldShowLoadMore) {
-      dispatch(loadMoreItems()); 
+      dispatch(loadMoreItems());
     }
   }, [dispatch, shouldShowLoadMore]);
 
-  if (isLoading && campers.length === 0) {
-    return <div style={{ textAlign: 'center', padding: '20px' }}>Завантаження кемперів...</div>;
-  }
-
-  if (error) {
-    return <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>Помилка: Не вдалося завантажити кемпери.</div>;
-  }
-
-  if (!isLoading && campers.length === 0 && !shouldShowLoadMore) {
-    return <div style={{ textAlign: 'center', padding: '20px' }}>Кемперів не знайдено.</div>;
-  }
+  const showNoCampersMessage = !isLoading && campers.length === 0 && !error;
 
   return (
     <section>
       <div className={styles.container}>
-        <div className={styles.bar}>
+        <div className={styles.contentWrapper}>
           <FilterBar />
-          <CampersList campers={campers} /> 
-        </div>
 
-        {shouldShowLoadMore && ( 
-          <div className={styles.loadMoreWrapper}>
-            <button
-              className={styles.loadMoreButton}
-              onClick={handleLoadMore}
-            >
-              Завантажити ще
-            </button>
+          <div className={styles.mainContent}> 
+            {isLoading && campers.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '20px' }}>Завантаження кемперів...</div>
+            )}
+
+            {error && (
+              <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>Помилка: Не вдалося завантажити кемпери. {error}</div>
+            )}
+
+            {campers.length > 0 && <CampersList campers={campers} />}
+
+            {showNoCampersMessage && (
+              <div style={{ textAlign: 'center', padding: '20px' }}>Кемперів за вашими критеріями не знайдено. Спробуйте змінити фільтри.</div>
+            )}
+
+            {shouldShowLoadMore && (
+              <div className={styles.loadMoreWrapper}>
+                <button
+                  className={styles.loadMoreButton}
+                  onClick={handleLoadMore}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Завантаження...' : 'Завантажити ще'}
+                </button>
+              </div>
+            )}
           </div>
-        )}
-
-        {!shouldShowLoadMore && campers.length > 0 && (
-          <div className={styles.noMoreMessage}>Більше кемперів немає.</div>
-        )}
+        </div>
       </div>
     </section>
   );
