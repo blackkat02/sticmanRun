@@ -1,109 +1,87 @@
 .formContainer {
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  /* ... існуючі стилі ... */
+  padding: 24px; 
   border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
 }
 
 .formTitle {
-  font-size: 22px;
-  margin-bottom: 10px;
-  color: #333;
+  font-size: 24px;
+  font-weight: 600; 
+  line-height: 1.25;
+  margin-bottom: 8px;
+  color: #1A1A1A;
 }
 
 .formSubtitle {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.25;
+  color: #4A4A4A;
+  margin-bottom: 24px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px; 
 }
 
-.inputField,
-.textareaField {
-  width: calc(100% - 20px); /* Adjust for padding */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.inputField {
+  width: 100%;
+  padding: 18px; 
+  border: 1px solid #D9D9D9;
+  border-radius: 5px; 
   font-size: 16px;
+  color: #1A1A1A;
+  box-sizing: border-box; 
+  background-color: #F7F7F7; 
 }
 
-.textareaField {
-  resize: vertical;
+.inputField::placeholder {
+  color: #4A4A4A; 
+}
+
+.inputError {
+  border-color: #e74c3c;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: -10px; 
+  margin-bottom: 5px;
+}
+
+.datePickerInput {
+  width: 100%; 
+  border: none;
+  background-color: transparent;
+  padding: 0; 
+  font-size: 16px;
+  color: #1A1A1A;
+  outline: none; 
+}
+
+.datePickerCalendar {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .submitButton {
-  background-color: #e44d26; /* Example submit button color */
+  background-color: #E44D26; 
   color: white;
-  padding: 12px 20px;
+  padding: 16px 24px; 
   border: none;
   border-radius: 5px;
   font-size: 18px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 100%;
 }
 
 .submitButton:hover {
-  background-color: #c0392b;
-}
-
-/* pages/CamperDetailsPage/CamperDetailsPage.module.css */
-
-/* ... (existing styles) ... */
-
-.tabs {
-  display: flex;
-  gap: 20px;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 20px;
-}
-
-.tabButton,
-.tabButtonActive { /* Styles for NavLink */
-  background: none;
-  border: none;
-  padding: 10px 0;
-  font-size: 18px;
-  font-weight: 500;
-  cursor: pointer;
-  color: #777;
-  border-bottom: 2px solid transparent;
-  text-decoration: none; /* Remove underline from NavLink */
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.tabButtonActive { /* Styles for active NavLink */
-  color: #1a1a1a;
-  border-color: #1a1a1a;
-}
-
-.tabContent {
-  display: flex;
-  gap: 40px; /* Space between main content (features/reviews) and booking form */
-}
-
-.mainContent {
-    flex: 2; /* Takes more space for features/reviews */
-}
-
-.bookingFormSection {
-  flex: 1; /* Takes less space */
-  min-width: 300px; /* Ensure form doesn't become too narrow */
-}
-
-@media (max-width: 768px) {
-  /* ... (existing responsive styles) ... */
-  .tabContent {
-    flex-direction: column;
-  }
-  .mainContent,
-  .bookingFormSection {
-    flex: none;
-    width: 100%;
-  }
+  background-color: #C0392B; 
 }
