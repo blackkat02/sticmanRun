@@ -1,20 +1,16 @@
-import React from 'react'; // Додаємо React, якщо ще не доданий
+import React from 'react'; 
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // Імпортуємо хуки Redux
-import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice'; // Імпортуємо екшени favoriteSlice
-import { selectFavoriteItems } from '../../redux/store'; // Імпортуємо селектор з store.js
+import { useDispatch, useSelector } from 'react-redux'; 
+import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice'; 
+import { selectFavoriteItems } from '../../redux/store'; 
 import styles from './CamperCard.module.css';
-
-// Приклад іконки сердечка (замініть на вашу реальну іконку)
-// import { ReactComponent as HeartIcon } from '../../assets/icons/heart.svg';
-// import { ReactComponent as FilledHeartIcon } from '../../assets/icons/filled-heart.svg';
 
 const CamperCard = ({ camper, location }) => {
   const dispatch = useDispatch();
-  const favoriteItems = useSelector(selectFavoriteItems); // Отримуємо масив ID обраних кемперів
+  const favoriteItems = useSelector(selectFavoriteItems); 
 
   const {
-    _id,
+    id,
     name,
     price,
     rating,
@@ -29,30 +25,28 @@ const CamperCard = ({ camper, location }) => {
     consumption,
     transmission,
     engine,
-    // Припустимо, що ці властивості є безпосередньо на об'єкті camper
-    // Якщо вони в details, вам потрібно буде звертатись через camper.details.AC
-    AC, // Assuming direct property on camper
-    bathroom, // Assuming direct property on camper
-    kitchen, // Assuming direct property on camper
-    TV, // Assuming direct property on camper
-    radio, // Assuming direct property on camper
-    refrigerator, // Assuming direct property on camper
-    microwave, // Assuming direct property on camper
-    gas, // Assuming direct property on camper
-    water, // Assuming direct property on camper
+
+    AC,
+    bathroom, 
+    kitchen, 
+    TV, 
+    radio, 
+    refrigerator,
+    microwave,
+    gas, 
+    water,
     gallery = [],
   } = camper;
 
-  // Перевіряємо, чи поточний кемпер є в обраних
-  const isFavorite = favoriteItems.includes(_id);
+  const isFavorite = favoriteItems.includes(camper.id);
 
-  // Обробник для перемикання стану "обране"
   const handleToggleFavorite = (e) => {
-    e.preventDefault(); // Запобігаємо переходу за посиланням Link
+    e.preventDefault();
+    console.log(camper.id)
     if (isFavorite) {
-      dispatch(removeFromFavorites(_id));
+      dispatch(removeFromFavorites(camper.id));
     } else {
-      dispatch(addToFavorites(_id));
+      dispatch(addToFavorites(camper.id));
     }
   };
 
@@ -75,7 +69,7 @@ const CamperCard = ({ camper, location }) => {
     <li className={styles.item}>
       <div className={styles.imageContainer}>
         <Link
-          to={`/campers/${_id}`}
+          to={`/campers/${id}`}
           state={{ from: `${location.pathname}${location.search}` }}
           className={styles.link}
         >
@@ -89,43 +83,39 @@ const CamperCard = ({ camper, location }) => {
             </div>
           )}
         </Link>
-        {/* Кнопка "Обране" */}
         <button
           type="button"
           onClick={handleToggleFavorite}
           className={`${styles.favoriteButton} ${isFavorite ? styles.favorite : ''}`}
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
-          {/* Замініть на ваші іконки: {isFavorite ? <FilledHeartIcon /> : <HeartIcon />} */}
-          {/* Приклад з умовним рендерингом простих символів або placeholders */}
           {isFavorite ? '❤️' : '🤍'} 
         </button>
       </div>
 
-      <div className={styles.infoWrapper}> {/* Додамо обгортку для кращого контролю стилів */}
+      <div className={styles.infoWrapper}> 
         <div className={styles.header}>
             <h3 className={styles.name}>{name}</h3>
             <div className={styles.priceAndRating}>
                 <p className={styles.price}>${price}</p>
                 <p className={styles.rating}><span className={styles.starIcon}>⭐️</span> {rating} ({reviews.length} відгуків)</p>
-                <p className={styles.location}><span className={styles.mapPinIcon}>📍</span> {camperLocation}</p> {/* Замініть на іконку локації */}
+                <p className={styles.location}><span className={styles.mapPinIcon}>📍</span> {camperLocation}</p>
             </div>
         </div>
         
         <p className={styles.descriptionText}>{description}</p>
 
-                {/* Деталі обладнання */}
         <div className={styles.detailsList}>
           {AC && <span className={styles.detailItem}>AC</span>}
           {transmission === 'automatic' && <span className={styles.detailItem}>Automatic</span>}
           {kitchen && <span className={styles.detailItem}>Kitchen</span>}
           {TV && <span className={styles.detailItem}>TV</span>}
           {bathroom && <span className={styles.detailItem}>Bathroom</span>}
-          {radio && <span className={styles.detailItem}>Radio</span>} {/* Додано */}
-          {refrigerator && <span className={styles.detailItem}>Refrigerator</span>} {/* Додано */}
-          {microwave && <span className={styles.detailItem}>Microwave</span>} {/* Додано */}
-          {gas && <span className={styles.detailItem}>Gas</span>} {/* Додано */}
-          {water && <span className={styles.detailItem}>Water</span>} {/* Додано */}
+          {radio && <span className={styles.detailItem}>Radio</span>}
+          {refrigerator && <span className={styles.detailItem}>Refrigerator</span>}
+          {microwave && <span className={styles.detailItem}>Microwave</span>}
+          {gas && <span className={styles.detailItem}>Gas</span>}
+          {water && <span className={styles.detailItem}>Water</span>}
           {camper.details?.beds && <span className={styles.detailItem}>{camper.details.beds} beds</span>}
           <span className={styles.detailItem}>{vehicleTypeDisplay}</span>
         </div>

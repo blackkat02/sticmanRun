@@ -15,38 +15,30 @@ import styles from './CatalogPage.module.css';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
-  // Отримуємо кемперів, які вже відфільтровані та пагіновані
   const campers = useSelector(selectVisibleItems);
-  // Визначаємо, чи потрібно показувати кнопку "Load More"
   const shouldShowLoadMore = useSelector(selectLoadMore);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
 
-  // Ефект для першого завантаження даних при монтуванні компонента
   useEffect(() => {
-    dispatch(resetCatalogState()); // Скидаємо стан перед новим завантаженням (якщо користувач перейшов з іншої сторінки)
-    dispatch(getCatalogSliceThunk()); // Завантажуємо ВСІ кемпери з API
+    dispatch(resetCatalogState());
+    dispatch(getCatalogSliceThunk()); 
   }, [dispatch]);
 
-  // Обробник для кліку на кнопку "Load More"
   const handleLoadMore = useCallback(() => {
-    // Перевіряємо, чи є ще елементи для завантаження
     if (shouldShowLoadMore) {
-      dispatch(loadMoreItems()); // Диспетчеризуємо екшен для збільшення "сторінки"
+      dispatch(loadMoreItems()); 
     }
   }, [dispatch, shouldShowLoadMore]);
 
-  // Відображення стану завантаження (для першого завантаження)
   if (isLoading && campers.length === 0) {
     return <div style={{ textAlign: 'center', padding: '20px' }}>Завантаження кемперів...</div>;
   }
 
-  // Відображення помилки
   if (error) {
     return <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>Помилка: Не вдалося завантажити кемпери.</div>;
   }
 
-  // Відображення повідомлення, якщо кемперів не знайдено (після завантаження та фільтрації)
   if (!isLoading && campers.length === 0 && !shouldShowLoadMore) {
     return <div style={{ textAlign: 'center', padding: '20px' }}>Кемперів не знайдено.</div>;
   }
@@ -55,12 +47,11 @@ const CatalogPage = () => {
     <section>
       <div className={styles.container}>
         <div className={styles.bar}>
-          <FilterBar /> {/* FilterBar тепер сам керує своїми фільтрами через Redux */}
-          <CampersList campers={campers} /> {/* CampersList отримує вже відфільтровані та пагіновані кемпери */}
+          <FilterBar />
+          <CampersList campers={campers} /> 
         </div>
 
-        {/* Кнопка "Завантажити ще" */}
-        {shouldShowLoadMore && ( // Кнопка видима, якщо є ще елементи для завантаження
+        {shouldShowLoadMore && ( 
           <div className={styles.loadMoreWrapper}>
             <button
               className={styles.loadMoreButton}
@@ -71,7 +62,6 @@ const CatalogPage = () => {
           </div>
         )}
 
-        {/* Повідомлення, коли всі кемпери завантажені */}
         {!shouldShowLoadMore && campers.length > 0 && (
           <div className={styles.noMoreMessage}>Більше кемперів немає.</div>
         )}
