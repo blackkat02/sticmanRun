@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, NavLink, Outlet } from 'react-router-dom'; // <--- Додано NavLink, Outlet
 import { useDispatch, useSelector } from 'react-redux';
-import { getCatalogSliceThunk, getDetailsCampersSliceThunk } from '../../redux/campersOps';
-import { clearSelectedCamper } from '../../redux/catalogSlice';
-import { selectSelectedCamper, selectIsLoading, selectError } from '../../redux/catalogSlice';
+import { getDetailsCampersSliceThunk } from '../../redux/campersOps';
+import { selectSelectedCamper, selectIsLoading, selectError, clearSelectedCamper } from '../../redux/catalogSlice';
 import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice';
 import { selectFavoriteItems } from '../../redux/store'; 
 import styles from './CamperDetailsPage.module.css'; 

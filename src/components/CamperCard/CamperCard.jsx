@@ -67,7 +67,7 @@ const CamperCard = ({ camper }) => {
     <li className={styles.item}>
       <div className={styles.imageContainer}>
         <Link
-          to={`/campers/${id}`} // <--- Видалено state={{ from: ... }}
+          to={`/campers/${id}`} 
           className={styles.imageLink}
         >
           {gallery.length > 0 && (

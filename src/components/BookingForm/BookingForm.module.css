@@ -51,3 +51,59 @@
 .submitButton:hover {
   background-color: #c0392b;
 }
+
+/* pages/CamperDetailsPage/CamperDetailsPage.module.css */
+
+/* ... (existing styles) ... */
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tabButton,
+.tabButtonActive { /* Styles for NavLink */
+  background: none;
+  border: none;
+  padding: 10px 0;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #777;
+  border-bottom: 2px solid transparent;
+  text-decoration: none; /* Remove underline from NavLink */
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tabButtonActive { /* Styles for active NavLink */
+  color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.tabContent {
+  display: flex;
+  gap: 40px; /* Space between main content (features/reviews) and booking form */
+}
+
+.mainContent {
+    flex: 2; /* Takes more space for features/reviews */
+}
+
+.bookingFormSection {
+  flex: 1; /* Takes less space */
+  min-width: 300px; /* Ensure form doesn't become too narrow */
+}
+
+@media (max-width: 768px) {
+  /* ... (existing responsive styles) ... */
+  .tabContent {
+    flex-direction: column;
+  }
+  .mainContent,
+  .bookingFormSection {
+    flex: none;
+    width: 100%;
+  }
+}
