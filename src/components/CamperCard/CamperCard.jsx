@@ -42,7 +42,6 @@ const CamperCard = ({ camper, location }) => {
 
   const handleToggleFavorite = (e) => {
     e.preventDefault();
-    console.log(camper.id)
     if (isFavorite) {
       dispatch(removeFromFavorites(camper.id));
     } else {

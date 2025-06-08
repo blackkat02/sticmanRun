@@ -1,12 +1,12 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  selectVisibleItems, // Замінює selectCatalogSlice для відображуваних кемперів
-  selectLoadMore,     // Селектор для прапора кнопки "Load More"
-  selectIsLoading,    // Селектор для статусу завантаження
-  selectError,        // Селектор для статусу помилки
-  loadMoreItems,      // Екшен для завантаження наступної порції
-  resetCatalogState,  // Екшен для повного скидання стану каталогу
+  selectVisibleItems,
+  selectLoadMore, 
+  selectIsLoading, 
+  selectError,   
+  loadMoreItems, 
+  resetCatalogState, 
 } from '../../redux/catalogSlice';
 import { getCatalogSliceThunk } from '../../redux/campersOps';
 import FilterBar from '../../components/FilterBar/FilterBar';

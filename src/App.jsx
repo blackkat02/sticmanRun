@@ -5,7 +5,7 @@ import { lazy, Suspense } from "react";
 // const CampersFeatures = lazy(() => import("./components/CampersFeatures/CampersFeatures"));
 // const CampersReviews = lazy(() => import("./components/CampersReviews/CampersReviews"));
 const HomePage = lazy(() => import("./pages/HomePage/HomePage"));
-// const CampersDetailsPage = lazy(() => import("./pages/CampersDetailsPage/CampersDetailsPage"));
+const CamperDetailsPage = lazy(() => import("./pages/CamperDetailsPage/CamperDetailsPage"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage/CatalogPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage/NotFoundPage"));
 
@@ -16,10 +16,10 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/campers" element={<CatalogPage />} />
-          {/* <Route path="/catalog/:id" element={<CampersDetailsPage />}>
-            <Route path="features" element={<campersFeatures />} />
-            <Route path="reviews" element={<campersReviews />} />
-          </Route> */}
+          <Route path="/catalog/:id" element={<CamperDetailsPage />}>
+            {/* <Route path="features" element={<campersFeatures />} />
+            <Route path="reviews" element={<campersReviews />} /> */}
+          </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
