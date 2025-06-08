@@ -66,10 +66,6 @@ const CamperCard = ({ camper }) => {
   return (
     <li className={styles.item}>
       <div className={styles.imageContainer}>
-        <Link
-          to={`/campers/${id}`} 
-          className={styles.imageLink}
-        >
           {gallery.length > 0 && (
             <div className={styles.imageWrapper}>
               <img
@@ -79,7 +75,6 @@ const CamperCard = ({ camper }) => {
               />
             </div>
           )}
-        </Link>
         <button
           type="button"
           onClick={handleToggleFavorite}

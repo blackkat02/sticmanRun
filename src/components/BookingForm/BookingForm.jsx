@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import DatePicker from 'react-datepicker'; // Імпортуємо DatePicker
-import 'react-datepicker/dist/react-datepicker.css'; // Імпортуємо стилі DatePicker
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import styles from './BookingForm.module.css';
 
 const BookingForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    startDate: null, // Змінено на null для DatePicker
-    endDate: null,   // Змінено на null для DatePicker
-    comment: '', // Змінено на звичайний input
+    startDate: null,
+    endDate: null,
+    comment: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -24,7 +24,6 @@ const BookingForm = () => {
 
   const handleDateChange = ([startDate, endDate]) => {
     setFormData((prev) => ({ ...prev, startDate, endDate }));
-    // Очищаємо помилки для дат, якщо вони були
     if (errors.startDate) setErrors((prev) => ({ ...prev, startDate: '' }));
     if (errors.endDate) setErrors((prev) => ({ ...prev, endDate: '' }));
   };
@@ -39,7 +38,6 @@ const BookingForm = () => {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Введіть коректний Email.';
     }
-    // Перевірка дат для DatePicker
     if (!formData.startDate) {
       newErrors.startDate = 'Дата початку оренди є обов\'язковою.';
     }
@@ -72,22 +70,21 @@ const BookingForm = () => {
     }
   };
 
-  // Min date for date picker should be today
   const getMinDate = () => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+    today.setHours(0, 0, 0, 0);
     return today;
   };
 
   return (
     <div className={styles.formContainer}>
       <h3 className={styles.formTitle}>Book your campervan now</h3>
-      <p className={styles.formSubtitle}>Stay connected! We are always ready to help you.</p> {/* Текст з макета */}
+      <p className={styles.formSubtitle}>Stay connected! We are always ready to help you.</p>
       <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="text"
           name="name"
-          placeholder="Name"
+          placeholder="Name*" // Додано зірочку
           value={formData.name}
           onChange={handleChange}
           required
@@ -98,7 +95,7 @@ const BookingForm = () => {
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="Email*" // Додано зірочку
           value={formData.email}
           onChange={handleChange}
           required
@@ -107,28 +104,29 @@ const BookingForm = () => {
         {errors.email && <p className={styles.errorMessage}>{errors.email}</p>}
 
         {/* Date Picker для діапазону дат */}
-        <div className={`${styles.inputField} ${errors.startDate || errors.endDate ? styles.inputError : ''}`}>
+        {/* Обгортаємо DatePicker в div, щоб стилізувати його як inputField */}
+        <div className={`${styles.inputField} ${styles.datePickerWrapper} ${errors.startDate || errors.endDate ? styles.inputError : ''}`}>
           <DatePicker
             selected={formData.startDate}
             onChange={handleDateChange}
             startDate={formData.startDate}
             endDate={formData.endDate}
             selectsRange
-            inline={false} // Показувати як звичайний інпут
-            placeholderText="Booking date" // Плейсхолдер як на макеті
+            inline={false}
+            placeholderText="Booking date*" // Додано зірочку до плейсхолдера
             dateFormat="yyyy/MM/dd"
-            minDate={getMinDate()} // Мінімальна дата - сьогодні
-            className={styles.datePickerInput} // Додатковий клас для стилізації самого інпута
-            calendarClassName={styles.datePickerCalendar} // Клас для стилізації календаря
+            minDate={getMinDate()}
+            className={styles.datePickerInput}
+            calendarClassName={styles.datePickerCalendar}
           />
         </div>
         {(errors.startDate || errors.endDate) && <p className={styles.errorMessage}>{errors.startDate || errors.endDate}</p>}
 
 
-        <input // Змінено з textarea на input type="text" згідно макету
+        <input
           type="text"
           name="comment"
-          placeholder="Comment" // Змінено плейсхолдер згідно макету
+          placeholder="Comment" // На макеті без зірочки
           value={formData.comment}
           onChange={handleChange}
           className={styles.inputField}

@@ -27,16 +27,3 @@ export const store = configureStore({
 export const persistor = persistStore(store);
 
 export const selectFavoriteItems = importedSelectFavoriteItems;
-
-// import { configureStore, combineReducers  } from '@reduxjs/toolkit';
-// import { catalogSliceReducer } from './catalogSlice';
-// import filtersSliceReducer from './filtersSlice';
-
-// const rootReducer = combineReducers({
-//   catalog: catalogSliceReducer,
-//   filters: filtersSliceReducer,
-// });
-
-// export const store = configureStore({
-//   reducer: rootReducer,
-// });
