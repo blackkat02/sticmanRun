@@ -1,253 +1,158 @@
-.imageContainer {
-  flex: 0 0 292px; /* Фіксована ширина для флекс-елемента */
-  margin-right: 20px; /* Відступ від інших елементів */
+.item {
+  display: flex; 
+  width: 100%;
+  max-width: 888px; 
+  min-height: 368px; 
+  background-color: #fff; 
+  border: 1px solid #DADDE1; 
+  border-radius: 20px; 
+  padding: 24px; 
+  gap: 24px; 
+  overflow: hidden; 
 }
 
-.link {
-  display: block;
-  height: 100%;
+.imageContainer {
+  flex-shrink: 0; 
+  width: 292px;
+  height: 320px; 
+  position: relative; 
+  border-radius: 10px;
+  overflow: hidden; 
 }
 
 .imageWrapper {
-  position: relative;
   width: 100%;
-  height: 0;
-  padding-bottom: 66.67%; /* Співвідношення 3:2 (200/300) */
-  overflow: hidden;
-  border-radius: 8px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .camperImage {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  display: block; 
 }
 
-.camperImage:hover {
-  transform: scale(1.05);
-}
-
-.camper-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.camper-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.camper-name {
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-.camper-price {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #2a5885;
-}
-
-.camper-rating-location {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-  color: #555;
-}
-
-.rating {
-  color: #ffc107;
-  font-weight: bold;
-}
-
-.link {
-  max-width: 292px;
-  max-height: 320px;
-}
-
-.camper-description {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.camper-gallery {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  overflow-x: auto;
-}
-
-.gallery-thumb {
-  width: 100px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.camper-details h3,
-.camper-reviews h3 {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-}
-
-.detail-label {
-  font-weight: bold;
-}
-
-.feature {
-  background-color: #f0f8ff;
-  padding: 5px 10px;
-  border-radius: 4px;
-  display: inline-block;
-  margin: 2px;
-}
-
-.review {
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px dashed #eee;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.reviewer-name {
-  font-weight: bold;
-}
-
-.reviewer-rating {
-  color: #ffc107;
-}
-
-.review-comment {
-  color: #555;
-  margin: 0;
-}
-
-
-/* CamperCard.module.css */
-
-.item {
-  position: relative; /* Щоб кнопка favoritesButton позиціонувалася відносно картки */
-  /* ... інші стилі для елемента li */
-}
-
-.imageContainer {
-  position: relative; /* Контейнер для зображення та кнопки */
-  /* ... інші стилі для imageContainer */
-}
-
-.favoriteButton {
-  position: absolute;
-  top: 10px; /* Відступ зверху */
-  right: 10px; /* Відступ справа */
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 24px; /* Розмір іконки */
-  z-index: 10; /* Перекриває зображення */
-  padding: 0;
-  color: lightgray; /* Колір неактивного сердечка */
-  transition: color 0.2s ease-in-out;
-}
-
-.favoriteButton.favorite {
-  color: red; /* Колір активного сердечка */
-}
-
-/* Додаткові покращення для infoWrapper та деталей */
 .infoWrapper {
-    padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; 
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Вирівнюємо по верху */
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between; 
+  align-items: flex-start;
+  margin-bottom: 8px; 
 }
 
 .name {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
-    flex-grow: 1; /* Дозволяє займати доступний простір */
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  color: #101828;
 }
 
 .priceAndRating {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 5px; /* Простір між елементами */
-    margin-left: 10px; /* Відступ від назви */
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-end;
+  gap: 4px;
 }
 
 .price {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  color: #101828; 
 }
 
-.rating, .location {
-    font-size: 14px;
-    display: flex; /* Для вирівнювання іконки та тексту */
-    align-items: center;
-    gap: 5px;
-    margin: 0;
+.rating,
+.location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #475467;
+  margin: 0;
 }
 
-.starIcon, .mapPinIcon {
-    font-size: 16px; /* Розмір іконки */
+.starIcon,
+.mapPinIcon {
+  color: #FFC531;
+  font-size: 18px;
 }
+
+.mapPinIcon {
+  color: #101828;
+}
+
 
 .descriptionText {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 15px;
-    line-height: 1.5;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #475467;
+  margin-bottom: 24px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detailsList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px; 
-    margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; 
+  margin-bottom: 24px; 
 }
 
 .detailItem {
-    background-color: #f0f0f0;
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 12px;
-    color: #333;
-    white-space: nowrap; 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 100px; 
+  background-color: #F2F4F7; 
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #101828;
+  white-space: nowrap; 
+}
+
+.detailItem .iconPlaceholder {
+  font-size: 20px; 
+  line-height: 1; 
+}
+
+.showMoreButton {
+  background-color: #E44848; 
+  color: #fff;
+  border: none;
+  border-radius: 200px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 166px;
+  height: 56px; 
+  padding: 0; 
+}
+.showMoreButton:hover {
+  background-color: #D84343;
 }

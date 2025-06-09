@@ -1,14 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice';
-import { selectFavoriteItems } from '../../redux/store';
 import styles from './CamperCard.module.css';
+import FavoriteToggleButton from '../FavoriteToggleButton/FavoriteToggleButton'; 
+import Icon from '../Icon/Icon'; 
 
 const CamperCard = ({ camper }) => {
-  const dispatch = useDispatch();
-  const favoriteItems = useSelector(selectFavoriteItems);
-
   const {
     id,
     name,
@@ -18,11 +14,6 @@ const CamperCard = ({ camper }) => {
     location: camperLocation,
     description,
     form,
-    length,
-    width,
-    height,
-    tank,
-    consumption,
     transmission,
     engine,
     AC,
@@ -35,24 +26,13 @@ const CamperCard = ({ camper }) => {
     gas,
     water,
     gallery = [],
+    details = {}, 
   } = camper;
-
-  const isFavorite = favoriteItems.includes(id);
-
-  const handleToggleFavorite = (e) => {
-    e.preventDefault();
-    if (isFavorite) {
-      dispatch(removeFromFavorites(id));
-    } else {
-      dispatch(addToFavorites(id));
-    }
-  };
 
   let vehicleTypeDisplay = '';
   switch (form) {
     case 'panelTruck':
-      vehicleTypeDisplay = 'Фургон';
-      break;
+      vehicleTypeDisplay = 'Вен';
     case 'fullyIntegrated':
       vehicleTypeDisplay = 'Інтегрований';
       break;
@@ -60,7 +40,7 @@ const CamperCard = ({ camper }) => {
       vehicleTypeDisplay = 'Альков';
       break;
     default:
-      vehicleTypeDisplay = form;
+      vehicleTypeDisplay = form; 
   }
 
   return (
@@ -75,21 +55,14 @@ const CamperCard = ({ camper }) => {
               />
             </div>
           )}
-        <button
-          type="button"
-          onClick={handleToggleFavorite}
-          className={`${styles.favoriteButton} ${isFavorite ? styles.favorite : ''}`}
-          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          {isFavorite ? '❤️' : '🤍'}
-        </button>
+        <FavoriteToggleButton camperId={id} /> 
       </div>
 
       <div className={styles.infoWrapper}>
         <div className={styles.header}>
             <h3 className={styles.name}>{name}</h3>
             <div className={styles.priceAndRating}>
-                <p className={styles.price}>${price}</p>
+                <p className={styles.price}>€{price.toFixed(2)}</p>
                 <p className={styles.rating}><span className={styles.starIcon}>⭐️</span> {rating} ({reviews.length} відгуків)</p>
                 <p className={styles.location}><span className={styles.mapPinIcon}>📍</span> {camperLocation}</p>
             </div>
@@ -98,18 +71,18 @@ const CamperCard = ({ camper }) => {
         <p className={styles.descriptionText}>{description}</p>
 
         <div className={styles.detailsList}>
-          {AC && <span className={styles.detailItem}>AC</span>}
-          {transmission === 'automatic' && <span className={styles.detailItem}>Automatic</span>}
-          {kitchen && <span className={styles.detailItem}>Kitchen</span>}
-          {TV && <span className={styles.detailItem}>TV</span>}
-          {bathroom && <span className={styles.detailItem}>Bathroom</span>}
-          {radio && <span className={styles.detailItem}>Radio</span>}
-          {refrigerator && <span className={styles.detailItem}>Refrigerator</span>}
-          {microwave && <span className={styles.detailItem}>Microwave</span>}
-          {gas && <span className={styles.detailItem}>Gas</span>}
-          {water && <span className={styles.detailItem}>Water</span>}
-          {camper.details?.beds && <span className={styles.detailItem}>{camper.details.beds} beds</span>}
-          <span className={styles.detailItem}>{vehicleTypeDisplay}</span>
+          {AC && <span className={styles.detailItem}><Icon name="AC" /> AC</span>}
+          {transmission === 'automatic' && <span className={styles.detailItem}><Icon name="transmission" /> Automatic</span>}
+          {kitchen && <span className={styles.detailItem}><Icon name="kitchen" /> Kitchen</span>}
+          {TV && <span className={styles.detailItem}><Icon name="TV" /> TV</span>}
+          {bathroom && <span className={styles.detailItem}><Icon name="bathroom" /> Bathroom</span>}
+          {radio && <span className={styles.detailItem}><Icon name="radio" /> Radio</span>}
+          {refrigerator && <span className={styles.detailItem}><Icon name="refrigerator" /> Refrigerator</span>}
+          {microwave && <span className={styles.detailItem}><Icon name="microwave" /> Microwave</span>}
+          {gas && <span className={styles.detailItem}><Icon name="gas" /> Gas</span>}
+          {water && <span className={styles.detailItem}><Icon name="water" /> Water</span>}
+          {details.beds > 0 && <span className={styles.detailItem}><Icon name="beds" /> {details.beds} beds</span>}
+          <span className={styles.detailItem}><Icon name="form" /> {vehicleTypeDisplay}</span>
         </div>
 
         <Link

@@ -1,109 +1,141 @@
 .filterBar {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  width: 360px; 
+  padding: 0; 
+  display: flex;
+  flex-direction: column;
+  gap: 48px; 
+  padding-bottom: 24px; 
 }
 
 .filterSection {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px; 
 }
 
 .sectionTitle {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.filterGroup {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.filterItem {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-  cursor: pointer;
+  line-height: 1.2;
+  color: #101828; 
+  margin: 0;
 }
 
 .locationInput {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 18px 18px 18px 44px; 
+  border: none; 
+  border-radius: 10px; 
+  background-color: #F7F7F7; 
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.25;
+  color: #101828; 
+  outline: none; 
+  background-image: url('../../assets/icons/map-pin.svg'); 
+  background-repeat: no-repeat;
+  background-position: 18px center;
+  background-size: 20px 20px;
 }
 
-.searchSection {
-  display: flex;
-  justify-content: flex-end;
+.locationInput::placeholder {
+  color: #475467;
 }
 
-.searchButton {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
+.filterSection svg {
+  margin-top: 10px; 
+  margin-bottom: 10px; 
+  width: 100%;
+  height: 2px; 
 }
 
-.searchButton:hover {
-  background-color: #45a049;
+.filterSection svg path {
+  stroke: #DADDE1; 
 }
 
 .filterGroup {
   display: flex;
-  flex-wrap: wrap; /* Дозволяє елементам переноситися на наступний рядок */
-  gap: 10px; /* Відстань між елементами */
-  justify-content: center; /* Вирівнювання по центру */
+  flex-wrap: wrap; 
+  gap: 10px; 
+  justify-content: flex-start; 
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  width: 112px; 
+  height: 95px; 
+  border: 1px solid #DADDE1; 
+  border-radius: 10px; 
+  background-color: #F2F4F7; 
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center; 
+}
+
+.filterItem:hover {
+  border-color: #E44848; 
+}
+
+.filterItem.selected {
+  background-color: #E44848;
+  border-color: #E44848; 
+  color: #fff; 
+}
+
+.hiddenCheckbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none; 
 }
 
 .iconLabel {
-  display: flex;
-  flex-direction: column; /* Елементи в стовпчик: іконка, потім текст */
-  align-items: center; /* Вирівнювання по центру по горизонталі */
-  justify-content: center; /* Вирівнювання по центру по вертикалі */
-  padding: 10px 15px; /* Внутрішні відступи */
-  border: 1px solid #d9d9d9; /* Рамка */
-  border-radius: 8px; /* Заокруглені кути */
-  cursor: pointer;
-  min-width: 80px; /* Мінімальна ширина для кращого вигляду */
-  text-align: center;
-  transition: background-color 0.2s, border-color 0.2s;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #101828; 
 }
 
-.iconLabel.selected {
-  background-color: #e0e0e0; /* Колір фону для вибраних елементів */
-  border-color: #1a1a1a; /* Колір рамки для вибраних елементів */
+.filterItem.selected .iconLabel {
+  color: #fff;
 }
 
 .iconWrapper {
-  margin-bottom: 5px; /* Відстань між іконкою та текстом */
-  /* Стилі для самої іконки, якщо це SVG або інший компонент */
-  font-size: 24px; /* Приклад розміру іконки */
+  margin-bottom: 8px; 
 }
 
-.hiddenCheckbox,
-.hiddenRadio {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  pointer-events: none; /* Гарантуємо, що клік буде по label */
+.searchSection {
+  margin-top: 24px; 
 }
 
-.filterItem input[type="checkbox"],
-.filterItem input[type="radio"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+.searchButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  width: 166px; 
+  height: 56px; 
+  padding: 0; 
+
+  background-color: #E44848; 
+  color: #fff;
+  border: none;
+  border-radius: 200px; 
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.searchButton:hover {
+  background-color: #cf3d3d;
 }
