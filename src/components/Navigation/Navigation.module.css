@@ -24,7 +24,7 @@
 
 .link {
   text-decoration: none;
-  color: #333;
+  color: #333; 
   font-weight: 500;
   padding: 5px 10px;
   border-radius: 4px;
@@ -36,6 +36,5 @@
 }
 
 .active {
-  color: #fff;
-  background-color: #0d6efd;
+  color: #E44848;
 }
