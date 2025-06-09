@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  setFilters,
-  selectCurrentFilters,
+  // setFilters,
+  // selectCurrentFilters,
 } from '../../redux/catalogSlice';
+import { setFilters, selectCurrentFilters } from '../../redux/filtersSlice'; // Імпортуємо з filterSlice
 import styles from './FilterBar.module.css';
 
 // Приклади імпорту іконок (ЗАМІНИТИ НА РЕАЛЬНІ ІКОНКИ)

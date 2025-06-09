@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { catalogSliceReducer } from './catalogSlice';
+import { filterSliceReducer } from './filtersSlice';
 import {
   persistedFavoritesReducer,
   selectFavoriteItems as importedSelectFavoriteItems 
@@ -11,6 +12,7 @@ import {
 
 const rootReducer = combineReducers({
   catalog: catalogSliceReducer,
+  filters: filterSliceReducer,
   favorites: persistedFavoritesReducer,
 });
 

@@ -1,5 +1,7 @@
+// src/redux/catalogSlice.js
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { getCatalogSliceThunk, getDetailsCampersSliceThunk } from "./campersOps"; 
+import { getCatalogSliceThunk, getDetailsCampersSliceThunk } from "./campersOps";
+import { selectCurrentFilters } from './filtersSlice'; // Імпортуємо селектор фільтрів
 
 const handlePending = (state) => {
   state.isLoading = true;
@@ -9,42 +11,26 @@ const handlePending = (state) => {
 const handleRejected = (state) => {
   state.isLoading = false;
   state.isError = true;
-  state.selectedCamper = null; 
+  state.selectedCamper = null;
 };
 
 const initialState = {
   allItems: [],
   total: 0,
   isLoading: false,
-  isLoadingMore: false,
+  isLoadingMore: false, // Ця властивість зараз не використовується, можна видалити якщо не планується
   isError: false,
   selectedCamper: null,
 
   pagination: {
     page: 1,
     perPage: 4,
-    totalFilteredItems: 0,
-  },
-
-  filters: {
-    location: '',
-    equipment: {
-      AC: false,
-      automatic: false,
-      kitchen: false,
-      TV: false,
-      bathroom: false,
-    },
-    vehicleType: { 
-      van: false,
-      fullyIntegrated: false,
-      alcove: false,
-    },
   },
 };
 
+// Функція applyFilters залишається тут, оскільки вона використовує allItems
+// і залежить від форми filters, яку ми імпортуємо через селектор.
 const applyFilters = (items, filters) => {
-
   return items.filter(item => {
     // Location filter
     const matchesLocation = filters.location
@@ -54,14 +40,13 @@ const applyFilters = (items, filters) => {
     // Equipment filters
     const matchesEquipment = Object.keys(filters.equipment).every(key => {
       if (filters.equipment[key]) {
-        // Special handling for 'automatic' which is transmission
         if (key === 'automatic') {
           return item.transmission === 'automatic';
         }
-        // For other equipment, check if the property exists and is truthy
-        return item[key]; // Assuming equipment properties like AC, kitchen are directly on item
+        // Перевіряємо, чи існує властивість і чи вона truthy
+        return item.details && item.details[key]; // Припускаємо, що деталі обладнання знаходяться в item.details
       }
-      return true; // If filter is false, it doesn't restrict
+      return true;
     });
 
     // Vehicle Type filters
@@ -70,35 +55,38 @@ const applyFilters = (items, filters) => {
     );
     const matchesVehicleType = selectedVehicleTypes.length > 0
       ? selectedVehicleTypes.includes(item.form)
-      : true; // If no vehicle type selected, all types match
+      : true;
 
     return matchesLocation && matchesEquipment && matchesVehicleType;
   });
 };
-// <--- END applyFilters DEFINITION ---
 
 
 const catalogSlice = createSlice({
-  name: 'campers',
+  name: 'campers', // Ім'я зрізу тепер 'campers'
   initialState,
   reducers: {
     resetCatalogState(state) {
-      return initialState;
+      // Скидаємо лише стан, який стосується каталогу, без фільтрів
+      state.allItems = [];
+      state.total = 0;
+      state.isLoading = false;
+      state.isLoadingMore = false;
+      state.isError = false;
+      state.selectedCamper = null;
+      state.pagination.page = 1; // Скидаємо пагінацію
     },
     loadMoreItems(state) {
       state.pagination.page += 1;
     },
-    setFilters(state, action) {
-      state.filters = {
-        ...state.filters,
-        location: action.payload.location !== undefined ? action.payload.location : state.filters.location,
-        equipment: { ...state.filters.equipment, ...action.payload.equipment },
-        vehicleType: { ...state.vehicleType, ...action.payload.vehicleType }, // Corrected state.vehicleType to state.filters.vehicleType
-      };
-      state.pagination.page = 1;
-    },
+    // setFilters тепер НЕ потрібен тут, він буде в filterSlice
+    // setFilters(state, action) { ... }
     clearSelectedCamper(state) {
         state.selectedCamper = null;
+    },
+    // Додамо редьюсер для скидання пагінації, якщо фільтри змінюються
+    resetPagination(state) {
+      state.pagination.page = 1;
     }
   },
   extraReducers: (builder) => {
@@ -108,7 +96,7 @@ const catalogSlice = createSlice({
         state.isLoading = false;
         state.allItems = payload.items;
         state.total = payload.total;
-        state.pagination.page = 1;
+        // state.pagination.page = 1; // Це буде скидатися через resetPagination при зміні фільтрів
       })
       .addCase(getCatalogSliceThunk.rejected, handleRejected)
 
@@ -121,21 +109,21 @@ const catalogSlice = createSlice({
   },
 });
 
-export const { resetCatalogState, loadMoreItems, setFilters, clearSelectedCamper } = catalogSlice.actions;
+export const { resetCatalogState, loadMoreItems, clearSelectedCamper, resetPagination } = catalogSlice.actions;
 
+// Селектори
 export const selectAllItems = (state) => state.catalog.allItems;
 export const selectTotalCampersCount = (state) => state.catalog.total;
 export const selectIsLoading = (state) => state.catalog.isLoading;
 export const selectError = (state) => state.catalog.isError;
 export const selectPagination = (state) => state.catalog.pagination;
-export const selectCurrentFilters = (state) => state.catalog.filters;
 export const selectSelectedCamper = (state) => state.catalog.selectedCamper;
 
+// Оновлений селектор для фільтрованих елементів
 export const selectFilteredItems = createSelector(
-  [selectAllItems, selectCurrentFilters],
+  [selectAllItems, selectCurrentFilters], // Використовуємо селектор з filterSlice
   (allItems, filters) => {
-    // The applyFilters function must be defined in this scope
-    return applyFilters(allItems, filters); 
+    return applyFilters(allItems, filters);
   }
 );
 
