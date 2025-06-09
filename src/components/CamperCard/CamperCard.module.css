@@ -232,14 +232,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Обмежує текст двома рядками */
+    -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical;
 }
 
 .detailsList {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* Простір між елементами деталей */
+    gap: 8px; 
     margin-top: 10px;
 }
 
@@ -249,5 +249,5 @@
     padding: 5px 12px;
     font-size: 12px;
     color: #333;
-    white-space: nowrap; /* Запобігає переносу тексту всередині елемента */
+    white-space: nowrap; 
 }

@@ -1,6 +1,17 @@
 .wrapper {
-  padding: 20px;
+  padding: 24px 652px 24px 64px;
   background-color: #f8f9fa;
+}
+
+.mainNav {
+  display: flex;
+  align-items: center;
+  gap: 450px;
+}
+
+.navLink {
+  text-decoration: none; 
+  color: inherit;
 }
 
 .list {

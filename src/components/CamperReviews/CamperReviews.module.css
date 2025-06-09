@@ -1,9 +1,7 @@
 .reviewsWrapper {
-  /* Wrapper for the ReviewsList component */
-  margin-top: 20px; /* Adjust as needed */
+  margin-top: 20px; 
 }
 
-/* Styles for individual review items (from ReviewsList.module.css or copy here if needed) */
 .reviewsListContainer {
   /* This is just a container for the reviews list */
 }

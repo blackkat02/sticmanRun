@@ -2,7 +2,6 @@ import { createSlice, createSelector } from '@reduxjs/toolkit';
 import { getCatalogSliceThunk, getDetailsCampersSliceThunk } from "./campersOps";
 import { selectCurrentFilters } from './filtersSlice';
 
-// Допоміжні функції для обробки станів thunk
 const handlePending = (state) => {
   state.isLoading = true;
   state.isError = false;
@@ -16,44 +15,28 @@ const handleRejected = (state, action) => {
   state.error = action.error.message || 'Failed to fetch data';
 };
 
-// Функція для застосування фільтрів до масиву елементів
 const applyFilters = (items, filters) => {
-  // Логи для відладки (можна закоментувати або прибрати після завершення відладки)
-  // console.log("--- Starting applyFilters ---");
-  // console.log("Filters applied (full object):", filters);
 
   return items.filter(item => {
-    // console.log("\n--- Checking item details for:", item.name, "---");
-    // console.log("Full item object:", item);
-    // console.log("Current filters for this item:", filters);
-
-    // Фільтрація за локацією
     const matchesLocation = filters.location
       ? item.location.toLowerCase().includes(filters.location.toLowerCase())
       : true;
 
-    // Фільтрація за обладнанням
     const matchesEquipment = Object.keys(filters.equipment).every(key => {
       if (filters.equipment[key]) {
         let equipmentMatches = false;
         if (key === 'automatic') {
-          equipmentMatches = item.transmission === 'automatic';
-          // console.log(`  Equipment: Checking automatic: item.transmission (${item.transmission}) === 'automatic' -> ${equipmentMatches}`);
+          equipmentMatches = item.transmission === 'automatic';;
         } else {
           equipmentMatches = !!item[key];
-          // console.log(`  Equipment: Checking ${key}: item[${key}] (${item[key]}) -> ${equipmentMatches}`);
         }
         if (!equipmentMatches) {
-            // console.log(`  Equipment: CRITERION FAILED for ${key} (Expected true, got false)`);
             return false;
         }
       }
       return true;
     });
-    // console.log(`Overall matchesEquipment for ${item.name}: ${matchesEquipment}`);
 
-
-    // Фільтрація за типом транспортного засобу (повернено до початкової логіки)
     const selectedVehicleTypes = Object.keys(filters.vehicleType).filter(
       type => filters.vehicleType[type]
     );
@@ -61,28 +44,19 @@ const applyFilters = (items, filters) => {
     const matchesVehicleType = selectedVehicleTypes.length > 0
       ? selectedVehicleTypes.some(selectedTypeFromUI => {
           let vehicleTypeMatches = false;
-          // Якщо з UI прийшло 'van', то в даних це 'panelTruck'
           if (selectedTypeFromUI === 'van') {
-            vehicleTypeMatches = item.form === 'panelTruck'; // <--- Ключова зміна
-            // console.log(`  VehicleType: Checking 'van' (mapped to 'panelTruck'): item.form (${item.form}) === 'panelTruck' -> ${vehicleTypeMatches}`);
+            vehicleTypeMatches = item.form === 'panelTruck'; 
           } else {
-            // Для інших типів (fullyIntegrated, alcove) - пряме співпадіння
             vehicleTypeMatches = item.form === selectedTypeFromUI;
-            // console.log(`  VehicleType: Checking '${selectedTypeFromUI}': item.form (${item.form}) === '${selectedTypeFromUI}' -> ${vehicleTypeMatches}`);
           }
           if (vehicleTypeMatches) {
               return true;
           }
           return false;
         })
-      : true; // Якщо жоден тип не вибрано, пропускаємо всі
-    // console.log(`Overall matchesVehicleType for ${item.name}: ${matchesVehicleType}`);
-
-
-    // Кінцевий результат фільтрації
+      : true;
+ 
     const finalResult = matchesLocation && matchesEquipment && matchesVehicleType;
-    // console.log(`Final Result for ${item.name}: Location=${matchesLocation}, Equipment=${matchesEquipment}, VehicleType=${matchesVehicleType} => ${finalResult}`);
-    // console.log("-------------------------------------------\n");
 
     return finalResult;
   });
@@ -151,7 +125,6 @@ const catalogSlice = createSlice({
   },
 });
 
-// Експорт екшенів
 export const {
   resetCatalogState,
   loadMoreItems,
@@ -159,7 +132,6 @@ export const {
   resetPagination
 } = catalogSlice.actions;
 
-// Селектори
 export const selectAllItems = (state) => state.catalog.allItems;
 export const selectTotalCampersCount = (state) => state.catalog.total;
 export const selectIsLoading = (state) => state.catalog.isLoading;
@@ -171,7 +143,6 @@ export const selectFilteredItems = createSelector(
   [selectAllItems, selectCurrentFilters],
   (allItems, filters) => {
     const filtered = applyFilters(allItems, filters);
-    // console.log("selectFilteredItems result (length):", filtered.length);
     return filtered;
   }
 );
@@ -187,7 +158,6 @@ export const selectVisibleItems = createSelector(
     const { page, perPage } = pagination;
     const endIndex = page * perPage;
     const visible = filteredItems.slice(0, endIndex);
-    // console.log("selectVisibleItems result (length):", visible.length);
     return visible;
   }
 );
@@ -199,5 +169,4 @@ export const selectLoadMore = createSelector(
   }
 );
 
-// Експорт редьюсера
 export const catalogSliceReducer = catalogSlice.reducer;

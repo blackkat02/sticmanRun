@@ -84,7 +84,7 @@ const BookingForm = () => {
         <input
           type="text"
           name="name"
-          placeholder="Name*" // Додано зірочку
+          placeholder="Name*" 
           value={formData.name}
           onChange={handleChange}
           required
@@ -95,7 +95,7 @@ const BookingForm = () => {
         <input
           type="email"
           name="email"
-          placeholder="Email*" // Додано зірочку
+          placeholder="Email*" 
           value={formData.email}
           onChange={handleChange}
           required
@@ -103,8 +103,6 @@ const BookingForm = () => {
         />
         {errors.email && <p className={styles.errorMessage}>{errors.email}</p>}
 
-        {/* Date Picker для діапазону дат */}
-        {/* Обгортаємо DatePicker в div, щоб стилізувати його як inputField */}
         <div className={`${styles.inputField} ${styles.datePickerWrapper} ${errors.startDate || errors.endDate ? styles.inputError : ''}`}>
           <DatePicker
             selected={formData.startDate}
@@ -113,7 +111,7 @@ const BookingForm = () => {
             endDate={formData.endDate}
             selectsRange
             inline={false}
-            placeholderText="Booking date*" // Додано зірочку до плейсхолдера
+            placeholderText="Booking date*"
             dateFormat="yyyy/MM/dd"
             minDate={getMinDate()}
             className={styles.datePickerInput}
@@ -126,7 +124,7 @@ const BookingForm = () => {
         <input
           type="text"
           name="comment"
-          placeholder="Comment" // На макеті без зірочки
+          placeholder="Comment" 
           value={formData.comment}
           onChange={handleChange}
           className={styles.inputField}

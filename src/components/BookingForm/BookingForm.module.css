@@ -42,17 +42,17 @@
 .inputField::placeholder {
   color: #4A4A4A;
 }
-.inputField::-webkit-input-placeholder { /* Для WebKit браузерів */
+.inputField::-webkit-input-placeholder { 
   color: #4A4A4A;
 }
-.inputField::-moz-placeholder { /* Для Firefox */
+.inputField::-moz-placeholder { 
   color: #4A4A4A;
-  opacity: 1; /* Потрібно для Firefox, інакше може бути напівпрозорим */
+  opacity: 1; 
 }
-.inputField:-ms-input-placeholder { /* Для Internet Explorer */
+.inputField:-ms-input-placeholder { 
   color: #4A4A4A;
 }
-.inputField::-ms-input-placeholder { /* Для Edge */
+.inputField::-ms-input-placeholder { 
   color: #4A4A4A;
 }
 

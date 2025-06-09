@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, NavLink, Outlet } from 'react-router-dom'; // <--- Додано NavLink, Outlet
+import { useParams, NavLink, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDetailsCampersSliceThunk } from '../../redux/campersOps';
 import { selectSelectedCamper, selectIsLoading, selectError, clearSelectedCamper } from '../../redux/catalogSlice';
@@ -7,6 +7,8 @@ import { addToFavorites, removeFromFavorites } from '../../redux/favoriteSlice';
 import { selectFavoriteItems } from '../../redux/store'; 
 import styles from './CamperDetailsPage.module.css'; 
 import BookingForm from '../../components/BookingForm/BookingForm'; 
+import Loader from '../../components/Loader/Loader'; 
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage'
 
 const Icon = ({ name }) => {
   const getIcon = (iconName) => {
@@ -66,11 +68,11 @@ const CamperDetailsPage = () => {
   };
 
   if (isLoading && !camper) {
-    return <div className={styles.loading}>Завантаження...</div>;
+    return <Loader /> 
   }
 
   if (error) {
-    return <div className={styles.error}>Помилка завантаження даних: {error}</div>;
+    return <ErrorMessage />;
   }
 
   if (!camper) {

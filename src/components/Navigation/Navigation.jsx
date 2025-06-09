@@ -8,9 +8,9 @@ const Navigation = () => {
       <nav className={css.mainNav}>
         <Link 
           to="/" 
-          className={css.logo}
+          className={css.navLink}
         >
-          <p className={css.logo}>Traver<span className={css.logoSpan}>Trucks</span></p>
+          <p className={css.logo}>Travel<span className={css.logoSpan}>Trucks</span></p>
         </Link>
         <ul className={css.list}>
           <li>

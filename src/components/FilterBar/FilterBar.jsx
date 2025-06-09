@@ -3,16 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFilters, selectCurrentFilters } from '../../redux/filtersSlice';
 import { resetPagination } from '../../redux/catalogSlice';
 import styles from './FilterBar.module.css';
+import clsx from 'clsx';
 
-// Приклади імпорту іконок (ЗАМІНИТИ НА РЕАЛЬНІ ІКОНКИ)
-// import { ReactComponent as AcIcon } from '../../assets/icons/ac.svg';
-// import { ReactComponent as AutomaticIcon } from '../../assets/icons/automatic.svg';
-// import { ReactComponent as KitchenIcon } from '../../assets/icons/kitchen.svg';
-// import { ReactComponent as TvIcon } from '../../assets/icons/tv.svg';
-// import { ReactComponent as BathroomIcon } from '../../assets/icons/bathroom.svg';
-// import { ReactComponent as VanIcon } from '../../assets/icons/van.svg';
-// import { ReactComponent as FullyIntegratedIcon } from '../../assets/icons/fullyIntegrated.svg';
-// import { ReactComponent as AlcoveIcon } from '../../assets/icons/alcove.svg';
+import AcIconSrc from '../../assets/icons/AC.svg';
+import AutomaticIconSrc from '../../assets/icons/automatic.svg';
+import KitchenIconSrc from '../../assets/icons/kitchen.svg';
+import TvIconSrc from '../../assets/icons/tv.svg';
+import BathroomIconSrc from '../../assets/icons/bathroom.svg';
+import VanIconSrc from '../../assets/icons/van.svg';
+import FullyIntegratedIconSrc from '../../assets/icons/fullyIntegrated.svg';
+import AlcoveIconSrc from '../../assets/icons/alcove.svg';
+
 
 const FilterBar = () => {
   const dispatch = useDispatch();
@@ -84,7 +85,7 @@ const FilterBar = () => {
       setFilters({
         location: localFilters.location,
         equipment: localFilters.equipment,
-        vehicleType: localFilters.vehicleType, // Відправляємо об'єкт як є
+        vehicleType: localFilters.vehicleType,
       })
     );
     dispatch(resetPagination());
@@ -106,17 +107,29 @@ const FilterBar = () => {
 
       <section className={styles.filterSection}>
         <h3 className={styles.sectionTitle}>Vehicle equipment</h3>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="360"
+          height="2"
+          viewBox="0 0 360 2"
+          fill="none"
+        >
+          <path d="M0 1H360" stroke="#DADDE1" />
+        </svg>
+
         <div className={styles.filterGroup} role="group" aria-labelledby="equipment-heading">
           {[
-            { id: 'ac', label: 'AC', name: 'AC', icon: <i></i> },
-            { id: 'automatic', label: 'Automatic', name: 'automatic', icon: <i></i> },
-            { id: 'kitchen', label: 'Kitchen', name: 'kitchen', icon: <i></i> },
-            { id: 'tv', label: 'TV', name: 'TV', icon: <i></i> },
-            { id: 'bathroom', label: 'Bathroom', name: 'bathroom', icon: <i></i> },
+            { id: 'ac', label: 'AC', name: 'AC', iconSrc: AcIconSrc }, 
+            { id: 'automatic', label: 'Automatic', name: 'automatic', iconSrc: AutomaticIconSrc }, 
+            { id: 'kitchen', label: 'Kitchen', name: 'kitchen', iconSrc: KitchenIconSrc }, 
+            { id: 'tv', label: 'TV', name: 'TV', iconSrc: TvIconSrc }, 
+            { id: 'bathroom', label: 'Bathroom', name: 'bathroom', iconSrc: BathroomIconSrc }, 
           ].map((item) => (
             <label
               key={item.id}
-              className={`${styles.filterItem} ${styles.iconLabel} ${localFilters.equipment[item.name] ? styles.selected : ''}`}
+              className={clsx(styles.filterItem, styles.iconLabel, {
+                [styles.selected]: localFilters.equipment[item.name],
+              })}
             >
               <input
                 type="checkbox"
@@ -127,8 +140,7 @@ const FilterBar = () => {
                 aria-label={`Filter by ${item.label}`}
               />
               <div className={styles.iconWrapper}>
-                {item.icon}
-                <span>{item.label}</span>
+                <img src={item.iconSrc} alt={item.label} width="32" height="32" />
               </div>
             </label>
           ))}
@@ -137,15 +149,28 @@ const FilterBar = () => {
 
       <section className={styles.filterSection}>
         <h3 className={styles.sectionTitle}>Vehicle type</h3>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="360"
+          height="2"
+          viewBox="0 0 360 2"
+          fill="none"
+        >
+          <path d="M0 1H360" stroke="#DADDE1" />
+        </svg>
+
         <div className={styles.filterGroup} role="group" aria-labelledby="vehicle-type-heading">
           {[
-            { id: 'van', label: 'Van', name: 'van', icon: <i></i> }, // <-- ПОВЕРНУЛИ 'van' сюди
-            { id: 'fully-integrated', label: 'Fully Integrated', name: 'fullyIntegrated', icon: <i></i> },
-            { id: 'alcove', label: 'Alcove', name: 'alcove', icon: <i></i> },
+            // І тут так само
+            { id: 'van', label: 'Van', name: 'van', iconSrc: VanIconSrc }, 
+            { id: 'fully-integrated', label: 'Fully Integrated', name: 'fullyIntegrated', iconSrc: FullyIntegratedIconSrc }, 
+            { id: 'alcove', label: 'Alcove', name: 'alcove', iconSrc: AlcoveIconSrc }, 
           ].map((item) => (
             <label
               key={item.id}
-              className={`${styles.filterItem} ${styles.iconLabel} ${localFilters.vehicleType[item.name] ? styles.selected : ''}`}
+              className={clsx(styles.filterItem, styles.iconLabel, {
+                [styles.selected]: localFilters.vehicleType[item.name],
+              })}
             >
               <input
                 type="checkbox"
@@ -157,8 +182,7 @@ const FilterBar = () => {
                 aria-label={`Filter by ${item.label}`}
               />
               <div className={styles.iconWrapper}>
-                {item.icon}
-                <span>{item.label}</span>
+                <img src={item.iconSrc} alt={item.label} width="32" height="32" />
               </div>
             </label>
           ))}
