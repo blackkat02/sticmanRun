@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  // setFilters,
-  // selectCurrentFilters,
-} from '../../redux/catalogSlice';
-import { setFilters, selectCurrentFilters } from '../../redux/filtersSlice'; // Імпортуємо з filterSlice
+import { setFilters, selectCurrentFilters } from '../../redux/filtersSlice';
+import { resetPagination } from '../../redux/catalogSlice';
 import styles from './FilterBar.module.css';
 
 // Приклади імпорту іконок (ЗАМІНИТИ НА РЕАЛЬНІ ІКОНКИ)
@@ -30,17 +27,18 @@ const FilterBar = () => {
       TV: false,
       bathroom: false,
     },
-    vehicleType: '',
+    vehicleType: {
+      van: false,
+      fullyIntegrated: false,
+      alcove: false,
+    },
   });
 
   useEffect(() => {
-    const selectedVehicleTypeKey = Object.keys(currentReduxFilters.vehicleType).find(
-      (key) => currentReduxFilters.vehicleType[key]
-    );
-
     setLocalFilters({
-      ...currentReduxFilters,
-      vehicleType: selectedVehicleTypeKey || '',
+      location: currentReduxFilters.location,
+      equipment: { ...currentReduxFilters.equipment },
+      vehicleType: { ...currentReduxFilters.vehicleType },
     });
   }, [currentReduxFilters]);
 
@@ -60,31 +58,36 @@ const FilterBar = () => {
 
   const handleVehicleTypeChange = (name) => {
     setLocalFilters((prev) => {
-      const newVehicleType = prev.vehicleType === name ? '' : name;
-      return {
-        ...prev,
-        vehicleType: newVehicleType,
+      const newVehicleTypeState = {
+        van: false,
+        fullyIntegrated: false,
+        alcove: false,
       };
+
+      if (prev.vehicleType[name]) {
+        return {
+          ...prev,
+          vehicleType: newVehicleTypeState,
+        };
+      } else {
+        newVehicleTypeState[name] = true;
+        return {
+          ...prev,
+          vehicleType: newVehicleTypeState,
+        };
+      }
     });
   };
 
   const handleSearch = () => {
-    const reduxVehicleType = {
-      van: false,
-      fullyIntegrated: false,
-      alcove: false,
-    };
-    if (localFilters.vehicleType) {
-      reduxVehicleType[localFilters.vehicleType] = true;
-    }
-
     dispatch(
       setFilters({
         location: localFilters.location,
         equipment: localFilters.equipment,
-        vehicleType: reduxVehicleType,
+        vehicleType: localFilters.vehicleType, // Відправляємо об'єкт як є
       })
     );
+    dispatch(resetPagination());
   };
 
   return (
@@ -105,11 +108,11 @@ const FilterBar = () => {
         <h3 className={styles.sectionTitle}>Vehicle equipment</h3>
         <div className={styles.filterGroup} role="group" aria-labelledby="equipment-heading">
           {[
-            { id: 'ac', label: 'AC', name: 'AC', icon: <i></i> }, // Додайте `<AcIcon />` тут
-            { id: 'automatic', label: 'Automatic', name: 'automatic', icon: <i></i> }, // Додайте `<AutomaticIcon />`
-            { id: 'kitchen', label: 'Kitchen', name: 'kitchen', icon: <i></i> }, // Додайте `<KitchenIcon />`
-            { id: 'tv', label: 'TV', name: 'TV', icon: <i></i> }, // Додайте `<TvIcon />`
-            { id: 'bathroom', label: 'Bathroom', name: 'bathroom', icon: <i></i> }, // Додайте `<BathroomIcon />`
+            { id: 'ac', label: 'AC', name: 'AC', icon: <i></i> },
+            { id: 'automatic', label: 'Automatic', name: 'automatic', icon: <i></i> },
+            { id: 'kitchen', label: 'Kitchen', name: 'kitchen', icon: <i></i> },
+            { id: 'tv', label: 'TV', name: 'TV', icon: <i></i> },
+            { id: 'bathroom', label: 'Bathroom', name: 'bathroom', icon: <i></i> },
           ].map((item) => (
             <label
               key={item.id}
@@ -136,21 +139,21 @@ const FilterBar = () => {
         <h3 className={styles.sectionTitle}>Vehicle type</h3>
         <div className={styles.filterGroup} role="group" aria-labelledby="vehicle-type-heading">
           {[
-            { id: 'van', label: 'Van', name: 'van', icon: <i></i> },
+            { id: 'van', label: 'Van', name: 'van', icon: <i></i> }, // <-- ПОВЕРНУЛИ 'van' сюди
             { id: 'fully-integrated', label: 'Fully Integrated', name: 'fullyIntegrated', icon: <i></i> },
             { id: 'alcove', label: 'Alcove', name: 'alcove', icon: <i></i> },
           ].map((item) => (
             <label
               key={item.id}
-              className={`${styles.filterItem} ${styles.iconLabel} ${localFilters.vehicleType === item.name ? styles.selected : ''}`}
+              className={`${styles.filterItem} ${styles.iconLabel} ${localFilters.vehicleType[item.name] ? styles.selected : ''}`}
             >
               <input
-                type="radio"
-                name="vehicleType"
+                type="checkbox"
+                name="vehicleTypeToggle"
                 id={item.id}
-                checked={localFilters.vehicleType === item.name}
+                checked={localFilters.vehicleType[item.name]}
                 onChange={() => handleVehicleTypeChange(item.name)}
-                className={styles.hiddenRadio}
+                className={styles.hiddenCheckbox}
                 aria-label={`Filter by ${item.label}`}
               />
               <div className={styles.iconWrapper}>
