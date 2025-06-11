@@ -1,9 +1,7 @@
-// components/CamperFeatures/CamperFeatures.jsx
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import styles from './CamperFeatures.module.css';
 
-// Helper for icon (keep it consistent, copy from CamperDetailsPage)
 const Icon = ({ name }) => {
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -54,7 +52,6 @@ const CamperFeatures = () => {
       vehicleTypeDisplay = camper.form;
   }
 
-  // Collect characteristics (equipment) for display (logic from CamperDetailsPage)
   const characteristics = [
     camper.transmission === 'automatic' && { label: 'Automatic', icon: 'transmission' },
     camper.engine && { label: camper.engine.charAt(0).toUpperCase() + camper.engine.slice(1), icon: 'engine' },
@@ -69,9 +66,8 @@ const CamperFeatures = () => {
     camper.water && { label: 'Water', icon: 'water' },
     camper.details?.beds && { label: `${camper.details.beds} beds`, icon: 'beds' },
     camper.form && { label: vehicleTypeDisplay, icon: 'form' },
-  ].filter(Boolean); // Remove falsy values
+  ].filter(Boolean);
 
-  // Collect details for display (logic from CamperDetailsPage)
   const details = [
     camper.length && { label: `Length: ${camper.length}`, icon: 'length' },
     camper.width && { label: `Width: ${camper.width}`, icon: 'width' },

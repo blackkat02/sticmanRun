@@ -61,7 +61,7 @@ const CatalogPage = () => {
                   onClick={handleLoadMore}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Завантаження...' : 'Завантажити ще'}
+                  {isLoading ? <Loader /> : 'Load more'}
                 </button>
               </div>
             )}
