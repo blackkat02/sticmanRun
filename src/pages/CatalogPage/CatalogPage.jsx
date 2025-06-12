@@ -11,6 +11,8 @@ import {
 import { getCatalogSliceThunk } from '../../redux/campersOps';
 import FilterBar from '../../components/FilterBar/FilterBar';
 import CampersList from '../../components/CampersList/CampersList';
+// import LoadMore from '../../components/LoadMore/LoadMore';
+import Loader from '../../components/Loader/Loader';
 import styles from './CatalogPage.module.css';
 
 const CatalogPage = () => {

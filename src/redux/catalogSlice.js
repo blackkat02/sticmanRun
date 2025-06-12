@@ -31,7 +31,7 @@ const applyFilters = (items, filters) => {
           equipmentMatches = !!item[key];
         }
         if (!equipmentMatches) {
-            return false;
+          return false;
         }
       }
       return true;
@@ -43,26 +43,25 @@ const applyFilters = (items, filters) => {
 
     const matchesVehicleType = selectedVehicleTypes.length > 0
       ? selectedVehicleTypes.some(selectedTypeFromUI => {
-          let vehicleTypeMatches = false;
-          if (selectedTypeFromUI === 'van') {
-            vehicleTypeMatches = item.form === 'panelTruck'; 
-          } else {
-            vehicleTypeMatches = item.form === selectedTypeFromUI;
-          }
-          if (vehicleTypeMatches) {
-              return true;
-          }
-          return false;
-        })
+        let vehicleTypeMatches = false;
+        if (selectedTypeFromUI === 'van') {
+          vehicleTypeMatches = item.form === 'panelTruck';
+        } else {
+          vehicleTypeMatches = item.form === selectedTypeFromUI;
+        }
+        if (vehicleTypeMatches) {
+          return true;
+        }
+        return false;
+      })
       : true;
- 
+
     const finalResult = matchesLocation && matchesEquipment && matchesVehicleType;
 
     return finalResult;
   });
 };
 
-// Початковий стан слайсу Redux
 const initialState = {
   allItems: [],
   total: 0,
