@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './CamperCard.module.css';
-import FavoriteToggleButton from '../FavoriteToggleButton/FavoriteToggleButton'; 
-import Icon from '../Icon/Icon'; 
+import FavoriteToggleButton from '../FavoriteToggleButton/FavoriteToggleButton';
+import Icon from '../Icon/Icon';
 
 const CamperCard = ({ camper }) => {
   const {
@@ -26,7 +26,7 @@ const CamperCard = ({ camper }) => {
     gas,
     water,
     gallery = [],
-    details = {}, 
+    details = {},
   } = camper;
 
   let vehicleTypeDisplay = '';
@@ -40,33 +40,35 @@ const CamperCard = ({ camper }) => {
       vehicleTypeDisplay = 'Альков';
       break;
     default:
-      vehicleTypeDisplay = form; 
+      vehicleTypeDisplay = form;
   }
 
   return (
     <li className={styles.item}>
       <div className={styles.imageContainer}>
-          {gallery.length > 0 && (
-            <div className={styles.imageWrapper}>
-              <img
-                src={gallery[0].original || gallery[0].thumb}
-                alt={`${name} thumbnail`}
-                className={styles.camperImage}
-              />
-            </div>
-          )}
-        <FavoriteToggleButton camperId={id} /> 
+        {gallery.length > 0 && (
+          <div className={styles.imageWrapper}>
+            <img
+              src={gallery[0].original || gallery[0].thumb}
+              alt={`${name} thumbnail`}
+              className={styles.camperImage}
+            />
+          </div>
+        )}
+
       </div>
 
       <div className={styles.infoWrapper}>
         <div className={styles.header}>
-            <h3 className={styles.name}>{name}</h3>
-            <div className={styles.priceAndRating}>
-                <p className={styles.price}>€{price.toFixed(2)}</p>
-                <p className={styles.rating}><span className={styles.starIcon}>⭐️</span> {rating} ({reviews.length} відгуків)</p>
-                <p className={styles.location}><span className={styles.mapPinIcon}>📍</span> {camperLocation}</p>
-            </div>
+          <h3 className={styles.name}>{name}</h3>
+          <p className={styles.price}>€{price.toFixed(2)}</p>
+          <FavoriteToggleButton camperId={id} />
         </div>
+        <div className={styles.placeAndRating}>
+          <p className={styles.rating}><span className={styles.starIcon}>⭐️</span> {rating} ({reviews.length} відгуків)</p>
+          <p className={styles.location}><span className={styles.mapPinIcon}>📍</span> {camperLocation}</p>
+        </div>
+
 
         <p className={styles.descriptionText}>{description}</p>
 
@@ -86,7 +88,7 @@ const CamperCard = ({ camper }) => {
         </div>
 
         <Link
-          to={`/campers/${id}`} 
+          to={`/campers/${id}`}
           className={styles.showMoreButton}
         >
           Show more

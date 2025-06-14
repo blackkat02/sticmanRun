@@ -56,9 +56,9 @@
   color: #101828;
 }
 
-.priceAndRating {
+.placeAndRating {
   display: flex;
-  flex-direction: column; 
+  flex-direction: row; 
   align-items: flex-end;
   gap: 4px;
 }
