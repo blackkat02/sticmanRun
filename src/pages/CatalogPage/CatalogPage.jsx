@@ -36,7 +36,8 @@ const CatalogPage = () => {
 
           <div className={styles.mainContent}>
             {isLoading && campers.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '20px' }}>Завантаження кемперів...</div>
+              <Loader />
+              // <div style={{ textAlign: 'center', padding: '20px' }}>Завантаження кемперів...</div>
             )}
 
             {error && (
