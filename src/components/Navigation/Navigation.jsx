@@ -3,7 +3,7 @@ import css from './Navigation.module.css';
 
 const Navigation = () => {
   return (
-    <header className="site-header">
+    <header className={css.siteHeader}>
     <div className={css.wrapper}>
       <nav className={css.mainNav}>
         <Link 

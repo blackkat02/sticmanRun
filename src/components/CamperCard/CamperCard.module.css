@@ -2,7 +2,7 @@
   display: flex; 
   width: 100%;
   max-width: 888px; 
-  min-height: 368px; 
+  max-height: 368px; 
   background-color: #fff; 
   border: 1px solid #DADDE1; 
   border-radius: 20px; 
@@ -17,7 +17,7 @@
   height: 320px; 
   position: relative; 
   border-radius: 10px;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .imageWrapper {
@@ -26,6 +26,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: 320px;
+  max-height: 524px;
 }
 
 .camperImage {
