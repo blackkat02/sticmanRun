@@ -1,5 +1,9 @@
-.wrapper {
+.siteHeader {
   max-width: 1440px;
+    margin: 0 24px 0 24px;
+}
+
+.wrapper {
   padding: 24px 652px 24px 64px;
   background-color: #f8f9fa;
 }
