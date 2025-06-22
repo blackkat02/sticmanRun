@@ -1,0 +1,18 @@
+/* src/components/Square/Square.module.css */
+
+.square {
+  /* Формули для клітинок: 1/8 від ширини/висоти батьківського контейнера */
+  width: 12.5%;  /* 100% / 8 клітинок = 12.5% */
+  height: 12.5%; /* 100% / 8 рядків = 12.5% */
+  flex-shrink: 0; /* Важливо: запобігає зменшенню розміру клітинок флексами */
+  box-sizing: border-box; /* Враховує padding і border у розмірі елемента */
+  /* Заберіть background-color звідси, бо він буде задаватись через light/dark */
+}
+
+.light {
+  background-color: #f0d9b5; /* Світлий колір */
+}
+
+.dark {
+  background-color: #b58863; /* Темний колір */
+}

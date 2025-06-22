@@ -1,17 +1,13 @@
 import React from 'react';
-import ChessGameContainer from '../components/ChessGameContainer';
+import ChessGameContainer from '../../components/ChessGameContainer/ChessGameContainer';
 
-function HomePage() {
-
+const HomePage = () => {
   return (
-    <div className="home-page-container">
-      <h1>Welcome to My Chess Game!</h1>
-
-      <ChessGameContainer /> 
-
-      <p>Feel free to explore and make a move!</p>
+    <div>
+      <h1>Шахи MVP</h1>
+      <ChessGameContainer />
     </div>
   );
-}
+};
 
 export default HomePage;

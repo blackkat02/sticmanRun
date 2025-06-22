@@ -1,43 +1,21 @@
 import React from 'react';
-// Якщо використовуємо react-chessboard:
-import { Chessboard } from 'react-chessboard';
+import Square from '../Square/Square';
+import styles from './ChessBoardView.module.css';
 
-// Якщо створюєте свою дошку:
-// import Square from './Square';
-// import Piece from './Piece';
-
-function ChessBoardView({ position, onPieceDrop, onSquareClick, selectedSquare }) {
-  // Якщо використовуємо react-chessboard:
-  return (
-    <div style={{ maxWidth: '600px', margin: 'auto' }}>
-      <Chessboard 
-        position={position}
-        onPieceDrop={onPieceDrop}
-        onSquareClick={onSquareClick} // Це, ймовірно, потрібно буде обробляти для custom highlights
-        // Проп для виділення клітинок залежить від react-chessboard або вашої реалізації
-        // У react-chessboard ви можете використовувати customSquareStyles або customPieces
-      />
-      {/* Тут може бути додатковий UI: статус гри, кнопки, історія ходів */}
-      <p>Current FEN: {position}</p>
-    </div>
-  );
-
-  // --- АБО ---
-  // Якщо рендеримо свою дошку з нуля (більше коду, але повний контроль):
-  /*
-  const renderSquares = () => {
-    const squares = [];
-    // Логіка перебору клітинок та рендерингу Square/Piece
-    // ...
-    return squares;
-  };
+const ChessBoardView = () => {
+  const board = [];
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      const isLight = (i + j) % 2 === 0;
+      board.push(<Square key={`${i}-${j}`} isLight={isLight} />);
+    }
+  }
 
   return (
-    <div className="custom-chess-board" style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 50px)', width: '400px' }}>
-      {renderSquares()}
+    <div className={styles.chessBoard}>
+      {board}
     </div>
   );
-  */
-}
+};
 
-export default React.memo(ChessBoardView); // Оптимізуємо візуальний компонент
+export default ChessBoardView;
