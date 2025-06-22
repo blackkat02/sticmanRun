@@ -1,0 +1,24 @@
+.homePageWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.buttonGroup {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.primaryButton {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.secondaryButton {
+  background-color: #6c757d;
+  color: white;
+  border-color: #6c757d;
+}

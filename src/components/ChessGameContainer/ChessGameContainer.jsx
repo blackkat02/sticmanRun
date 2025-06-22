@@ -1,11 +1,11 @@
 import React from 'react';
 import ChessBoardView from '../ChessBoardView/ChessBoardView';
 
-const ChessGameContainer = () => {
+const ChessGameContainer = ({ showSquareId }) => {
   return (
     <div className="chess-game-container">
       <h2>Шахова партія</h2>
-      <ChessBoardView />
+      <ChessBoardView showSquareId={showSquareId} />
     </div>
   );
 };

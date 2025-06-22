@@ -1,11 +1,15 @@
 import React from 'react';
-import styles from './Square.module.css'; // Оновлений імпорт
+import styles from './Square.module.css';
 
-const Square = ({ isLight }) => {
-  // Використання styles.light або styles.dark
+const Square = ({ isLight, id, showSquareId }) => {
   const className = isLight ? styles.light : styles.dark;
   return (
-    <div className={`${styles.square} ${className}`}></div> 
+    <div
+      id={id}
+      className={`${styles.square} ${className}`}
+    >
+      {showSquareId && <span className={styles.squareIdLabel}>{id}</span>}
+    </div>
   );
 };
 
