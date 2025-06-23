@@ -16,7 +16,7 @@ const HomePage = () => {
 
   return (
     <div className={styles.homePageWrapper}>
-      <h1>Шахи MVP</h1>
+      <h1>Chess MVP</h1>
 
       <ChessGameContainer showSquareId={showSquareId} />
 

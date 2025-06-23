@@ -1,8 +1,15 @@
+// src/components/ChessBoardView/ChessBoardView.jsx
 import React from 'react';
+// import { useSelector } from 'react-redux';
 import Square from '../Square/Square';
+import Piece from '../Piece/Piece';
 import styles from './ChessBoardView.module.css';
 
 const ChessBoardView = ({ showSquareId }) => {
+  // Отримуємо стан фігур з Redux Store
+  // Припустимо, що у нашому Redux Store є rootReducer, що включає chessSlice.reducer під ключем 'chess'
+  // const pieces = useSelector(state => state.chess.pieces);
+
   const board = [];
   const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
   const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
@@ -12,19 +19,23 @@ const ChessBoardView = ({ showSquareId }) => {
       const isLight = (i + j) % 2 === 0;
       const squareId = `${files[j]}${ranks[i]}`;
 
+      // pieceType тепер береться зі стану Redux
+      // const pieceType = pieces[squareId] || null;
+
       board.push(
         <Square
           key={`${i}-${j}`}
           id={squareId}
           isLight={isLight}
           showSquareId={showSquareId}
+          // pieceType={pieceType}
         />
       );
     }
   }
 
   return (
-    <div className={styles.mainWrapper}> 
+    <div className={styles.mainWrapper}>
       <div className={styles.ranksColumn}>
         {ranks.map(rank => (
           <div key={rank} className={styles.rankLabel}>{rank}</div>

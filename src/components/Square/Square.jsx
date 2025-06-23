@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './Square.module.css';
+import Piece from '../Piece/Piece';
 
-const Square = ({ isLight, id, showSquareId }) => {
+const Square = ({ isLight, id, showSquareId, pieceType }) => {
   const className = isLight ? styles.light : styles.dark;
   return (
     <div
@@ -9,6 +10,7 @@ const Square = ({ isLight, id, showSquareId }) => {
       className={`${styles.square} ${className}`}
     >
       {showSquareId && <span className={styles.squareIdLabel}>{id}</span>}
+      {pieceType && <Piece type={pieceType} />}
     </div>
   );
 };
