@@ -1,9 +1,10 @@
-// src/components/ChessBoardView/ChessBoardView.jsx
 import React from 'react';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Square from '../Square/Square';
 import Piece from '../Piece/Piece';
 import styles from './ChessBoardView.module.css';
+// import { initialPosition } from '../../redux/positionsSlice'; 
+import { initialPosition } from '../../redux/positions'; 
 
 const ChessBoardView = ({ showSquareId }) => {
   // Отримуємо стан фігур з Redux Store
@@ -18,9 +19,11 @@ const ChessBoardView = ({ showSquareId }) => {
     for (let j = 0; j < 8; j++) {
       const isLight = (i + j) % 2 === 0;
       const squareId = `${files[j]}${ranks[i]}`;
+      console.log(squareId)
 
-      // pieceType тепер береться зі стану Redux
-      // const pieceType = pieces[squareId] || null;
+      const piece = initialPosition.find(p => p.position === squareId);
+      const pieceType = piece ? piece.name : null;
+      console.log(pieceType); // 'wp', 'bp' або null
 
       board.push(
         <Square
@@ -28,7 +31,7 @@ const ChessBoardView = ({ showSquareId }) => {
           id={squareId}
           isLight={isLight}
           showSquareId={showSquareId}
-          // pieceType={pieceType}
+          pieceType={pieceType}
         />
       );
     }

@@ -1,10 +1,12 @@
-import React, { useState } from 'react'; // Імпортуємо useState
-import ChessGameContainer from '../../components/ChessGameContainer/ChessGameContainer';
-import Button from '../../components/Button/Button'; // Імпортуємо компонент Button
-import styles from './HomePage.module.css'; // Переконайтеся, що у вас є HomePage.module.css для стилізації кнопок
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+// import { initialPosition } from '../../redux/positionsSlice'; 
+import ChessBoardView from '../../components/ChessBoardView/ChessBoardView';
+import Button from '../../components/Button/Button';
+import styles from './HomePage.module.css'; 
 
 const HomePage = () => {
-  const [showSquareId, setShowSquareId] = useState(false); // Створюємо стан для відображення ID
+  const [showSquareId, setShowSquareId] = useState(false);
 
   const handleShowId = () => {
     setShowSquareId(true);
@@ -18,7 +20,7 @@ const HomePage = () => {
     <div className={styles.homePageWrapper}>
       <h1>Chess MVP</h1>
 
-      <ChessGameContainer showSquareId={showSquareId} />
+      <ChessBoardView showSquareId={showSquareId} />
 
       <div className={styles.buttonGroup}>
         <Button
