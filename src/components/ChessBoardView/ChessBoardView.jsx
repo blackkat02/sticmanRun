@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Square from '../Square/Square';
-import Piece from '../Piece/Piece';
+// import Piece from '../Piece/Piece';
 import styles from './ChessBoardView.module.css';
 // import { initialPosition } from '../../redux/positionsSlice'; 
-import { initialPosition } from '../../redux/positions'; 
+import { initialBoardPieces } from '../../redux/positions'; 
 
 const ChessBoardView = ({ showSquareId }) => {
   // Отримуємо стан фігур з Redux Store
@@ -21,7 +21,7 @@ const ChessBoardView = ({ showSquareId }) => {
       const squareId = `${files[j]}${ranks[i]}`;
       console.log(squareId)
 
-      const piece = initialPosition.find(p => p.position === squareId);
+      const piece = initialBoardPieces.find(p => p.position === squareId);
       const pieceType = piece ? piece.name : null;
       console.log(pieceType); // 'wp', 'bp' або null
 

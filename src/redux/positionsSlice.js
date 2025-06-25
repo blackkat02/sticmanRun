@@ -1,21 +1,28 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { initialPosition } from './positions';
 
-export const initialPosition = [
-  { name: 'wp', position: 'a2' },
-  { name: 'bp', position: 'a7' },
-];
-
-// export const initialPosition = 
-//   { name: 'wp', position: 'a2' },
-
-// ;
-
-const positionsSlice = createSlice({
+export const positionsSlice = createSlice({
   name: 'positions',
   initialState: {
-    initialPosition: initialPosition,
-    // items: [],
+    board: initialPosition,
+    currentPlayer: 'white',
+    history: [],
+
     // isLoading: false,
     // isError: false,
   },
+  reducers: {
+    changePositions(state, action) {
+      state.board = action.payload;
+
+      state.currentPlayer = state.currentPlayer === 'white' ? 'black' : 'white';
+
+      state.history.push({
+        board: action.payload,
+        player: state.currentPlayer
+      });
+    }
+  },
 })
+
+export const { changePositions } = changePositions.actions;
