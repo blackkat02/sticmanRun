@@ -10,16 +10,9 @@ export const initialBoardPieces = [
     { name: 'wk', position: 'e1' }, { name: 'wb', position: 'f1' }, { name: 'wn', position: 'g1' }, { name: 'wr', position: 'h1' },
 ];
 
-
-/**
- * Створює початкову шахову дошку як 8x8 матрицю.
- * @returns {Array<Array<string|null>>} 2D-масив, що представляє дошку.
- */
 export const createInitialBoard = () => {
-    // Ініціалізуємо порожню дошку нулями або null
     const board = Array(8).fill(null).map(() => Array(8).fill(null));
 
-    // Розставляємо фігури згідно з початковою позицією
     initialBoardPieces.forEach(piece => {
         const { row, col } = algebraicToCoords(piece.position);
         board[row][col] = piece.name;

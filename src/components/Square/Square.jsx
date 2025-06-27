@@ -1,18 +1,21 @@
+// Square.jsx (Виправлено)
 import React from 'react';
+import Piece from '../Piece/Piece'; // Переконайтесь, що шлях правильний
 import styles from './Square.module.css';
-import Piece from '../Piece/Piece';
 
-const Square = ({ isLight, id, showSquareId, pieceType }) => {
-  const className = isLight ? styles.light : styles.dark;
+const Square = ({ id, isLight, showSquareId, pieceType, onClick }) => {
+  // console.log(`Рендер клітинки: ${id}`); // Тепер використовуємо 'id'
+
   return (
     <div
-      id={id}
-      className={`${styles.square} ${className}`}
+      // Використовуємо 'id' для класів, якщо стилі залежать від алгебраїчної нотації
+      className={`${styles.square} ${isLight ? styles.light : styles.dark} ${styles[id] || ''}`}
+      onClick={onClick}
     >
-      {showSquareId && <span className={styles.squareIdLabel}>{id}</span>}
+      {showSquareId && <span className={styles.squareId}>{id}</span>} {/* <-- Виправлено на 'id' */}
       {pieceType && <Piece type={pieceType} />}
     </div>
   );
 };
 
-export default Square;
+export default React.memo(Square);
