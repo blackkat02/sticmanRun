@@ -1,4 +1,4 @@
-export const initialBoardPieces = [
+export const initialBoardPiecesArray = [
     { name: 'br', position: 'a8' }, { name: 'bn', position: 'b8' }, { name: 'bb', position: 'c8' }, { name: 'bq', position: 'd8' },
     { name: 'bk', position: 'e8' }, { name: 'bb', position: 'f8' }, { name: 'bn', position: 'g8' }, { name: 'br', position: 'h8' },
     { name: 'bp', position: 'a7' }, { name: 'bp', position: 'b7' }, { name: 'bp', position: 'c7' }, { name: 'bp', position: 'd7' },
@@ -10,14 +10,19 @@ export const initialBoardPieces = [
     { name: 'wk', position: 'e1' }, { name: 'wb', position: 'f1' }, { name: 'wn', position: 'g1' }, { name: 'wr', position: 'h1' },
 ];
 
-export const createInitialBoard = () => {
-    const board = Array(8).fill(null).map(() => Array(8).fill(null));
+// export const createInitialBoard = () => {
+//     const board = Array(8).fill(null).map(() => Array(8).fill(null));
 
-    initialBoardPieces.forEach(piece => {
-        const { row, col } = algebraicToCoords(piece.position);
-        board[row][col] = piece.name;
-    });
+//     initialBoardPieces.forEach(piece => {
+//         const { row, col } = algebraicToCoords(piece.position);
+//         board[row][col] = piece.name;
+//     });
 
-    return board;
-};
+//     return board;
+// };
+
+export const initialBoardPiecesObject = initialBoardPiecesArray.reduce((acc, piece) => {
+    acc[piece.position] = piece.name;
+    return acc;
+}, {});
 

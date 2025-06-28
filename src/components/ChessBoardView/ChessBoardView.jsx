@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'; // Додали useState �
 import { useSelector } from 'react-redux'; // Залишаємо, бо скоро будемо використовувати
 import Square from '../Square/Square';
 import styles from './ChessBoardView.module.css';
-import { initialBoardPieces } from '../../redux/positions'; // Ваше початкове розташування фігур
+import { initialBoardPiecesObject } from '../../redux/positions';
 // Якщо ви вже маєте функцію для створення матриці дошки, імпортуйте її
 // import { createInitialBoard } from '../../utils/boardUtils'; // Або з chessSlice
 
@@ -10,8 +10,11 @@ const ChessBoardView = ({ showSquareId }) => {
   // Тимчасова імітація boardMatrix, поки не підключимо Redux
   // У майбутньому: const boardMatrix = useSelector(state => state.chess.board);
   const getPieceAtSquareId = (squareId) => {
-    const piece = initialBoardPieces.find(p => p.position === squareId);
-    return piece ? piece.name : null;
+    const piece = initialBoardPiecesObject[squareId];
+    console.log(`Clicked on square: ${piece}`)
+    return piece ? piece : null;
+    // const piece = initialBoardPiecesObject.find(p => p.position === squareId);
+    // return piece ? piece.name : null;
   };
 
   const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
