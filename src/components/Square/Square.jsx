@@ -1,21 +1,27 @@
-// Square.jsx (Виправлено)
 import React from 'react';
-import Piece from '../Piece/Piece'; // Переконайтесь, що шлях правильний
+import Piece from '../Piece/Piece';
 import styles from './Square.module.css';
 
-const Square = ({ id, isLight, showSquareId, pieceType, onClick }) => {
-  // console.log(`Рендер клітинки: ${id}`); // Тепер використовуємо 'id'
+const Square = React.memo(({ id, isLight, showSquareId, pieceType, onClick }) => {
+  const colorName = isLight ? 'світла' : 'темна';
+  const pieceDescription = pieceType ? `з фігурою ${pieceType}` : 'порожня';
 
   return (
-    <div
-      // Використовуємо 'id' для класів, якщо стилі залежать від алгебраїчної нотації
+    <button // Змінили <div> на <button>
       className={`${styles.square} ${isLight ? styles.light : styles.dark} ${styles[id] || ''}`}
       onClick={onClick}
+      // Ці атрибути тепер не потрібні, бо <button> надає їх за замовчуванням
+      // role="button"
+      // tabIndex={0}
+      // onKeyDown={(event) => { /* ... */ }}
+      
+      // aria-label все ще корисний для надання більш детального контексту
+      aria-label={`Клітинка ${id}, ${colorName} ${pieceDescription}`}
     >
-      {showSquareId && <span className={styles.squareId}>{id}</span>} {/* <-- Виправлено на 'id' */}
+      {showSquareId && <span className={styles.squareId}>{id}</span>}
       {pieceType && <Piece type={pieceType} />}
-    </div>
+    </button>
   );
-};
+});
 
 export default React.memo(Square);

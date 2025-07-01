@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'; // Додали useState та useCallback
+import React, { useState, useRef, useCallback } from 'react'; // Додали useState та useCallback
 import { useSelector } from 'react-redux'; // Залишаємо, бо скоро будемо використовувати
 import Square from '../Square/Square';
 import styles from './ChessBoardView.module.css';
@@ -13,8 +13,6 @@ const ChessBoardView = ({ showSquareId }) => {
     const piece = initialBoardPiecesObject[squareId];
     console.log(`Clicked on square: ${piece}`)
     return piece ? piece : null;
-    // const piece = initialBoardPiecesObject.find(p => p.position === squareId);
-    // return piece ? piece.name : null;
   };
 
   const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -22,6 +20,7 @@ const ChessBoardView = ({ showSquareId }) => {
 
   // --- Крок 1: Додаємо стан для відстеження вибраної клітинки ---
   const [selectedSquare, setSelectedSquare] = useState(null); // Зберігає 'a2', 'e4' або null
+  // const selectedSquare = useRef(null);
 
   // --- Крок 2: Модифікуємо handleClick для обробки двох кліків ---
   const handleClick = useCallback((squareId) => {
@@ -32,6 +31,9 @@ const ChessBoardView = ({ showSquareId }) => {
       const pieceType = getPieceAtSquareId(squareId);
       if (pieceType) { // Клікаємо тільки якщо на клітинці є фігура
         setSelectedSquare(squareId); // Запам'ятовуємо ID обраної клітинки
+
+        // selectedSquare.current = squareId;
+        // console.log('Вибраний квадрат:', selectedSquare.current);
         console.log(`First click: Selected piece ${pieceType} at ${squareId}`);
         // Тут ви можете додати логіку для підсвічування обраної клітинки
       } else {
