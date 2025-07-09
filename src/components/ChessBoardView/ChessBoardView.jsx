@@ -1,65 +1,63 @@
-import React, { useState, useRef, useCallback } from 'react'; // Додали useState та useCallback
-import { useSelector } from 'react-redux'; // Залишаємо, бо скоро будемо використовувати
+import React, { useState, useRef, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import Square from '../Square/Square';
 import styles from './ChessBoardView.module.css';
 import { initialBoardPiecesObject } from '../../redux/positions';
-// Якщо ви вже маєте функцію для створення матриці дошки, імпортуйте її
-// import { createInitialBoard } from '../../utils/boardUtils'; // Або з chessSlice
 
 const ChessBoardView = ({ showSquareId }) => {
-  // Тимчасова імітація boardMatrix, поки не підключимо Redux
-  // У майбутньому: const boardMatrix = useSelector(state => state.chess.board);
   const getPieceAtSquareId = (squareId) => {
     const piece = initialBoardPiecesObject[squareId];
-    console.log(`Clicked on square: ${piece}`)
+    console.log(`Checking square ${squareId}: ${piece ? piece : 'empty'}`);
     return piece ? piece : null;
   };
 
   const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
   const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
-  // --- Крок 1: Додаємо стан для відстеження вибраної клітинки ---
-  const [selectedSquare, setSelectedSquare] = useState(null); // Зберігає 'a2', 'e4' або null
-  // const selectedSquare = useRef(null);
+  // `selectedSquare` is no longer directly used for visual highlight based on its own state.
+  // We'll primarily use `clickedPieceRef.current` for that.
+  // We still keep `selectedSquare` for `useCallback` dependency if needed, or if you plan
+  // to use it for other state-driven visuals later (e.g., target square).
+  const [selectedSquare, setSelectedSquare] = useState(null); // Keep it for now as it's in useCallback dependency
 
-  // --- Крок 2: Модифікуємо handleClick для обробки двох кліків ---
+  // This ref will now explicitly control the highlight for the selected piece.
+  const clickedPieceRef = useRef(null);
+
   const handleClick = useCallback((squareId) => {
-    // console.log(`Clicked on square: ${squareId}`); // Для дебагу
-
-    if (selectedSquare === null) {
-      // Перший клік: вибираємо клітинку
+    if (clickedPieceRef.current === null) {
       const pieceType = getPieceAtSquareId(squareId);
-      if (pieceType) { // Клікаємо тільки якщо на клітинці є фігура
-        setSelectedSquare(squareId); // Запам'ятовуємо ID обраної клітинки
 
-        // selectedSquare.current = squareId;
-        // console.log('Вибраний квадрат:', selectedSquare.current);
-        console.log(`First click: Selected piece ${pieceType} at ${squareId}`);
-        // Тут ви можете додати логіку для підсвічування обраної клітинки
+      if (pieceType) {
+        clickedPieceRef.current = squareId;
+
+        console.log(`First click: Piece ${pieceType} found at ${squareId}.`);
+        console.log(`clickedPieceRef.current set to: ${clickedPieceRef.current} (should now be highlighted)`);
+        console.log(`selectedSquare (useState) set to: ${selectedSquare}`); // Still logs previous state
       } else {
-        console.log(`First click: ${squareId} is empty. No piece to select.`);
+        console.log(`First click: ${squareId} is empty. No piece to select. Nothing highlighted.`);
       }
-    } else {
-      // Другий клік: є вже обрана клітинка, тепер це цільова
-      const fromSquare = selectedSquare;
-      const toSquare = squareId;
+    }
+    // --- SECOND CLICK LOGIC (a piece has already been selected via clickedPieceRef) ---
+    else {
+      const fromSquare = clickedPieceRef.current; // Source from ref
+      const toSquare = squareId;                   // Target is current click
+      setSelectedSquare(squareId);
 
-      console.log(`Second click: Trying to move from ${fromSquare} to ${toSquare}`);
+      console.log(`Second click: Attempting move from ${fromSquare} to ${toSquare}.`);
+      console.log(`Value from clickedPieceRef.current: ${clickedPieceRef.current}`);
+      console.log(`Value from selectedSquare (useState): ${selectedSquare}`);
 
-      // --- Крок 3: Початкова логіка ходу ---
-      // На цьому етапі ви можете просто вивести інформацію про хід.
-      // Пізніше тут буде виклик валідації ходу та dispatch Redux-екшену.
       const fromPieceType = getPieceAtSquareId(fromSquare);
       const toPieceType = getPieceAtSquareId(toSquare);
 
-      console.log(`Move attempt: ${fromPieceType} from ${fromSquare} to ${toSquare} (target: ${toPieceType || 'empty'})`);
+      console.log(`Move attempt: ${fromPieceType} from ${fromSquare} to ${toSquare} (target: ${toPieceType || 'empty'}).`);
 
-
-      // --- Важливо: Скидаємо вибрану клітинку після другого кліку ---
-      setSelectedSquare(null); // Після спроби ходу, скидаємо виділення
-      // Тут також потрібно буде скинути будь-яке підсвічування легальних ходів
+      // Reset both the ref and the state after the move attempt
+      clickedPieceRef.current = null;
+      setSelectedSquare(null); // Clear any highlight
+      console.log('Selection and ref cleared after second click.');
     }
-  }, [selectedSquare]); // Залежність для useCallback: selectedSquare
+  }, [selectedSquare]); // selectedSquare is still a dependency because we use it to trigger re-renders
 
   const boardSquares = [];
 
@@ -70,8 +68,9 @@ const ChessBoardView = ({ showSquareId }) => {
 
       const pieceType = getPieceAtSquareId(squareId);
 
-      // Додаємо пропс `isSelected` для візуального відображення
-      const isSelected = selectedSquare === squareId;
+      // --- CRUCIAL CHANGE HERE ---
+      // `isSelected` now depends on `clickedPieceRef.current`
+      const isSelected = clickedPieceRef.current === squareId;
 
       boardSquares.push(
         <Square
@@ -80,7 +79,7 @@ const ChessBoardView = ({ showSquareId }) => {
           isLight={isLight}
           showSquareId={showSquareId}
           pieceType={pieceType}
-          isSelected={isSelected} // Передаємо стан виділення
+          isSelected={isSelected} // This prop now highlights the square from clickedPieceRef
           onClick={() => handleClick(squareId)}
         />
       );
