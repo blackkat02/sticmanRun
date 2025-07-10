@@ -1,63 +1,83 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux'; // Redux поки не потрібен
 import Square from '../Square/Square';
 import styles from './ChessBoardView.module.css';
-import { initialBoardPiecesObject } from '../../redux/positions';
+// Перейменовуємо для ясності, щоб не плутати з локальним станом
+import { initialBoardPiecesObject as initialBoardState } from '../../redux/positions'; 
 
 const ChessBoardView = ({ showSquareId }) => {
-  const getPieceAtSquareId = (squareId) => {
-    const piece = initialBoardPiecesObject[squareId];
-    console.log(`Checking square ${squareId}: ${piece ? piece : 'empty'}`);
+  // === Ключова зміна: boardPiecesObject тепер є локальним станом ===
+  // Ініціалізуємо стан дошки копією початкового об'єкта.
+  // Цей об'єкт буде змінюватися (імутабельно), і React буде його відстежувати.
+  const [boardPiecesObject, setBoardPiecesObject] = useState(initialBoardState);
+
+  console.log("Поточний стан дошки (useState):", boardPiecesObject); 
+
+  // getPieceAtSquareId тепер читає з локального стану boardPiecesObject
+  const getPieceAtSquareId = useCallback((squareId) => {
+    const piece = boardPiecesObject[squareId]; 
+    console.log(`Перевіряємо клітинку ${squareId}: ${piece ? piece : 'порожньо'}`);
     return piece ? piece : null;
-  };
+  }, [boardPiecesObject]); // Залежність: функція оновиться, якщо boardPiecesObject зміниться
 
   const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
   const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
-  // `selectedSquare` is no longer directly used for visual highlight based on its own state.
-  // We'll primarily use `clickedPieceRef.current` for that.
-  // We still keep `selectedSquare` for `useCallback` dependency if needed, or if you plan
-  // to use it for other state-driven visuals later (e.g., target square).
-  const [selectedSquare, setSelectedSquare] = useState(null); // Keep it for now as it's in useCallback dependency
-
-  // This ref will now explicitly control the highlight for the selected piece.
+  // selectedSquare використовується для візуального виділення першої клітинки
+  const [selectedSquare, setSelectedSquare] = useState(null); 
+  // clickedPieceRef зберігає ID клітинки-джерела першого кліку
   const clickedPieceRef = useRef(null);
 
   const handleClick = useCallback((squareId) => {
-    if (clickedPieceRef.current === null) {
-      const pieceType = getPieceAtSquareId(squareId);
+    // --- ПЕРШИЙ КЛІК: вибір фігури ---
+    if (selectedSquare === null) { // Якщо раніше нічого не було вибрано
+      const pieceType = getPieceAtSquareId(squareId); // Перевіряємо, чи є фігура на клітинці
 
-      if (pieceType) {
-        clickedPieceRef.current = squareId;
-
-        console.log(`First click: Piece ${pieceType} found at ${squareId}.`);
-        console.log(`clickedPieceRef.current set to: ${clickedPieceRef.current} (should now be highlighted)`);
-        console.log(`selectedSquare (useState) set to: ${selectedSquare}`); // Still logs previous state
+      if (pieceType) { // Якщо фігура є
+        setSelectedSquare(squareId); // Виділяємо клітинку візуально
+        clickedPieceRef.current = squareId; // Зберігаємо клітинку в рефі як джерело ходу
+        console.log(`Перший клік: Знайдено фігуру ${pieceType} на ${squareId}. Підсвічуємо.`);
       } else {
-        console.log(`First click: ${squareId} is empty. No piece to select. Nothing highlighted.`);
+        console.log(`Перший клік: ${squareId} порожня. Нічого виділяти.`);
       }
     }
-    // --- SECOND CLICK LOGIC (a piece has already been selected via clickedPieceRef) ---
+    // --- ДРУГИЙ КЛІК: спроба зробити хід ---
     else {
-      const fromSquare = clickedPieceRef.current; // Source from ref
-      const toSquare = squareId;                   // Target is current click
-      setSelectedSquare(squareId);
+      const fromSquare = clickedPieceRef.current; // Клітинка, з якої робиться хід (з рефа)
+      const toSquare = squareId;                   // Клітинка, куди робиться хід (другий клік)
 
-      console.log(`Second click: Attempting move from ${fromSquare} to ${toSquare}.`);
-      console.log(`Value from clickedPieceRef.current: ${clickedPieceRef.current}`);
-      console.log(`Value from selectedSquare (useState): ${selectedSquare}`);
+      console.log(`Другий клік: Спроба ходу з ${fromSquare} на ${toSquare}.`);
 
-      const fromPieceType = getPieceAtSquareId(fromSquare);
-      const toPieceType = getPieceAtSquareId(toSquare);
+      // Отримуємо фігуру, яку потрібно перемістити, з поточного стану дошки
+      const pieceToMove = getPieceAtSquareId(fromSquare);
 
-      console.log(`Move attempt: ${fromPieceType} from ${fromSquare} to ${toSquare} (target: ${toPieceType || 'empty'}).`);
+      if (pieceToMove) { // Перевіряємо, чи дійсно фігура була на початковій клітинці
+        // === ІМУТАБЕЛЬНЕ ОНОВЛЕННЯ СТАНУ ДОШКИ ===
+        // 1. Створюємо НОВУ копію поточного об'єкта стану дошки.
+        //    Це КЛЮЧОВИЙ момент для того, щоб React побачив зміни.
+        const newBoard = { ...boardPiecesObject };
 
-      // Reset both the ref and the state after the move attempt
-      clickedPieceRef.current = null;
-      setSelectedSquare(null); // Clear any highlight
-      console.log('Selection and ref cleared after second click.');
+        // 2. Видаляємо фігуру з початкової клітинки у НОВІЙ копії
+        delete newBoard[fromSquare];
+
+        // 3. Додаємо фігуру на цільову клітинку у НОВІЙ копії
+        newBoard[toSquare] = pieceToMove;
+
+        // 4. Оновлюємо стан React за допомогою функції-сеттера.
+        //    Це примушує компонент перерендеритися з новими даними.
+        setBoardPiecesObject(newBoard);
+        console.log(`Хід виконано: ${pieceToMove} з ${fromSquare} на ${toSquare}.`);
+        console.log("Новий стан дошки після ходу:", newBoard);
+      } else {
+        console.log(`На клітинці ${fromSquare} немає фігури для переміщення.`);
+      }
+
+      // Скидаємо виділення та реф після спроби ходу
+      setSelectedSquare(null); // Прибираємо візуальне виділення
+      clickedPieceRef.current = null; // Очищаємо реф
+      console.log('Виділення та реф очищені після другого кліку.');
     }
-  }, [selectedSquare]); // selectedSquare is still a dependency because we use it to trigger re-renders
+  }, [selectedSquare, getPieceAtSquareId, boardPiecesObject]); // Залежності useCallback
 
   const boardSquares = [];
 
@@ -66,11 +86,11 @@ const ChessBoardView = ({ showSquareId }) => {
       const isLight = (i + j) % 2 === 0;
       const squareId = `${files[j]}${ranks[i]}`;
 
-      const pieceType = getPieceAtSquareId(squareId);
+      // Отримуємо тип фігури з актуального стану дошки
+      const pieceType = getPieceAtSquareId(squareId); 
 
-      // --- CRUCIAL CHANGE HERE ---
-      // `isSelected` now depends on `clickedPieceRef.current`
-      const isSelected = clickedPieceRef.current === squareId;
+      // isSelected контролює підсвічування клітинки, вибраної першим кліком
+      const isSelected = selectedSquare === squareId;
 
       boardSquares.push(
         <Square
@@ -79,7 +99,7 @@ const ChessBoardView = ({ showSquareId }) => {
           isLight={isLight}
           showSquareId={showSquareId}
           pieceType={pieceType}
-          isSelected={isSelected} // This prop now highlights the square from clickedPieceRef
+          isSelected={isSelected} // Цей пропс тепер керує підсвіткою
           onClick={() => handleClick(squareId)}
         />
       );
