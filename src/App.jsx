@@ -1,12 +1,23 @@
-import React from 'react';
-import HomePage from './pages/HomePage/HomePage';
-import './App.module.css'; 
+import { Route, Routes } from "react-router-dom";
+import MainLayout from './layouts/MainLayout/MainLayout';
+import { lazy, Suspense, React } from "react";
+
+const HomePage = lazy(() => import("./pages/HomePage/HomePage"));
+const SandBoxPage = lazy(() => import("./pages/SandBoxPage/SandBoxPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage/NotFoundPage"));
+// import style from './App.module.css'; 
 
 function App() {
   return (
-    <div className="App">
-      <HomePage />
-    </div>
+    <Suspense fallback={<div>Завантаження сторінки...</div>}>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="/sandbox" element={<SandBoxPage />} />
+        </Route>
+        <Route path="*" element={<NotFoundPage />} /> 
+      </Routes>
+    </Suspense>
   );
 }
 

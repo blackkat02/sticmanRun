@@ -44,7 +44,7 @@ const ChessBoardView = ({ showSquareId }) => {
     // --- ДРУГИЙ КЛІК: спроба зробити хід ---
     else {
       const fromSquare = clickedPieceRef.current; // Клітинка, з якої робиться хід (з рефа)
-      const toSquare = squareId;                   // Клітинка, куди робиться хід (другий клік)
+      const toSquare = squareId;                 // Клітинка, куди робиться хід (другий клік)
 
       console.log(`Другий клік: Спроба ходу з ${fromSquare} на ${toSquare}.`);
 
