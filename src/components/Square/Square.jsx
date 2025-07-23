@@ -10,10 +10,6 @@ const Square = React.memo(({ id, isLight, showSquareId, pieceType, onClick }) =>
     <button // Змінили <div> на <button>
       className={`${styles.square} ${isLight ? styles.light : styles.dark} ${styles[id] || ''}`}
       onClick={onClick}
-      // Ці атрибути тепер не потрібні, бо <button> надає їх за замовчуванням
-      // role="button"
-      // tabIndex={0}
-      // onKeyDown={(event) => { /* ... */ }}
       
       // aria-label все ще корисний для надання більш детального контексту
       aria-label={`Клітинка ${id}, ${colorName} ${pieceDescription}`}
