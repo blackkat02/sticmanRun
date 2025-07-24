@@ -1,27 +1,28 @@
-// Cell.js - Компонент окремої клітинки
+// Cell.jsx
 import React from 'react';
 
-export const Cell = ({ x, y, level, onClick }) => {
+export const Cell = ({ x, y, level, onClick, children }) => { 
   const cellStyle = {
-    width: '50px', // Розмір клітинки
+    width: '50px',
     height: '50px',
-    border: '1px dashed lightgray', // Переривчастий світло-сірий бордер
+    border: '1px dashed lightgray',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: '0.8em',
-    color: '#667',
-    boxSizing: 'border-box', // Щоб бордер не збільшував розмір клітинки
+    color: '#666',
+    boxSizing: 'border-box',
     cursor: 'pointer',
-    backgroundColor: 'white', // Можеш змінити для візуалізації рівнів
+    backgroundColor: 'white',
+    position: 'relative', 
   };
 
-  // Тимчасова індикація для демонстрації координат та рівнів
-  const displayCoord = `${x}${String.fromCharCode(97 + level)}`; // 0a, 1b, etc.
+  const displayCoord = `${x}${String.fromCharCode(97 + level)}`;
   
   return (
     <button style={cellStyle} onClick={onClick}>
       {displayCoord}
+      {children} {/* Тут будуть відображатися діти, тобто твій Sticman */}
     </button>
   );
 };

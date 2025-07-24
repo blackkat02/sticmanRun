@@ -1,0 +1,13 @@
+/* Sticman.module.css */
+/* Це CSS-модуль, тому назва класу буде унікальною */
+.sticmanKnight { 
+  font-family: 'Noto Sans', sans-serif; /* Правильна властивість для шрифту */
+  font-size: 36px; /* Правильна властивість для розміру шрифту */
+  line-height: 1; 
+  display: flex;
+  justify-content: center; /* Правильно: justify-content */
+  align-items: center;    /* Правильно: align-items */
+  width: 100%;
+  height: 100%;
+  color: black;
+}
