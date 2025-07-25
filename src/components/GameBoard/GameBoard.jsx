@@ -1,10 +1,10 @@
 // GameBoard.jsx
 import React from 'react';
-// Виправлені імпорти: додано .jsx розширення
-import { Cell } from '../Cell/Cell.jsx'; 
-import Sticman from '../Sticman/Sticman.jsx'; 
+import { Cell } from '../Cell/Cell.jsx'; // Переконайтеся, що шлях правильний і розширення .jsx
+import Sticman from '../Sticman/Sticman.jsx'; // Переконайтеся, що шлях правильний і розширення .jsx
 
-export const GameBoard = ({ playerPosition, onCellClick }) => {
+// GameBoard тепер отримує лише playerPosition як пропс
+export const GameBoard = ({ playerPosition }) => { 
   const boardWidthInCells = 20;
   const numberOfLevels = 3;
 
@@ -14,22 +14,23 @@ export const GameBoard = ({ playerPosition, onCellClick }) => {
     gridTemplateRows: `repeat(${numberOfLevels}, 50px)`,
     gap: '0px',
     maxWidth: '100%',
-    overflowX: 'auto',
-    margin: '20px auto',
-    border: '2px solid #333',
-    transform: 'scaleY(-1)', // Перевертаємо по вертикалі для візуалізації рівнів
+    overflowX: 'auto', // Дозволяє горизонтальну прокрутку, якщо дошка ширша за екран
+    margin: '20px auto', // Центрує дошку по горизонталі
+    border: '2px solid #333', // Бордер для всієї дошки
+    transform: 'scaleY(-1)', // Перевертаємо по вертикалі для візуалізації рівнів (0-й рівень знизу)
   };
 
   const cellContainerStyle = {
-    transform: 'scaleY(-1)', // Перевертаємо кожну клітинку назад, щоб вміст був правильним
-    position: 'relative', // Важливо для позиціонування Sticman
+    transform: 'scaleY(-1)', // Перевертаємо кожну клітинку назад, щоб вміст (текст, кінь) був правильним
+    position: 'relative', // Важливо для позиціонування Sticman всередині клітинки
   };
 
   const cells = [];
+  // Генеруємо клітинки для кожного рівня та координати X
   for (let level = 0; level < numberOfLevels; level++) {
     for (let x = 0; x < boardWidthInCells; x++) {
       // Перевіряємо, чи поточна клітинка є позицією гравця
-      // playerPosition тепер завжди об'єкт { x, level }
+      // playerPosition - це об'єкт { x, level }
       const isPlayerHere = playerPosition.x === x && playerPosition.level === level;
 
       cells.push(
@@ -37,9 +38,9 @@ export const GameBoard = ({ playerPosition, onCellClick }) => {
           <Cell 
             x={x} 
             level={level}
-            onClick={() => onCellClick(x, level)} // Передаємо клік назад в HomePage
+            // onClick більше не потрібен для руху, оскільки рух керується клавіатурою в HomePage
           >
-            {/* Якщо гравець на цій клітинці, відображаємо Sticman */}
+            {/* Умовне відображення Sticman: показуємо його тільки на поточній позиції гравця */}
             {isPlayerHere && <Sticman positionX={x} positionY={level} level={level} />}
           </Cell>
         </div>
@@ -53,3 +54,4 @@ export const GameBoard = ({ playerPosition, onCellClick }) => {
     </div>
   );
 };
+

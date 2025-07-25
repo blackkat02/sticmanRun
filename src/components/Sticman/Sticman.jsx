@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './Sticman.module.css'; // Імпортуємо CSS-модуль
 
 const Sticman = ({ positionX, positionY, level }) => {
-  const chessKnightSymbol = '♞'; 
+  const chessKnightSymbol = '♞'; // Символ чорного шахового коня
 
   return (
     // Використовуємо клас з імпортованого модуля стилів
