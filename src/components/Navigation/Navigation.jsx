@@ -10,7 +10,7 @@ const Navigation = () => {
           to="/" 
           className={css.navLink}
         >
-          <p className={css.logo}>Chess<span className={css.logoSpan}>B</span></p>
+          <p className={css.logo}>Sticman<span className={css.logoSpan}>Run</span></p>
         </Link>
         <ul className={css.list}>
           <li>
