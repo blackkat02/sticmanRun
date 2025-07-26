@@ -1,7 +1,6 @@
 // Cell.jsx
 import React from 'react';
 
-// onClick більше не передається як пропс, оскільки рух керується клавіатурою
 export const Cell = ({ x, y, level, children }) => { 
   const cellStyle = {
     width: '50px',
@@ -13,20 +12,22 @@ export const Cell = ({ x, y, level, children }) => {
     fontSize: '0.8em',
     color: '#666',
     boxSizing: 'border-box',
-    cursor: 'default', // Змінено на 'default', оскільки клітинки більше не клікабельні для руху гравця
+    cursor: 'default', 
     backgroundColor: 'white',
-    position: 'relative', // Важливо для позиціонування дочірніх елементів (як Sticman)
+    position: 'relative', 
+    // This transform flips the content of the cell (text, knight) back to normal orientation
+    // because the parent grid is flipped (scaleY(-1)).
+    transform: 'scaleY(-1)', 
   };
 
-  // Формуємо відображення координати, наприклад, "0a", "1b"
-  const displayCoord = `${x}${String.fromCharCode(97 + level)}`;
+  // Change coordinate display to X-Level (1-indexed level)
+  // level + 1 so that level 0 displays as 1, level 1 as 2, etc.
+  const displayCoord = `${x}-${level + 1}`; 
   
   return (
-    // onClick атрибут прибрано з кнопки, оскільки він більше не використовується для руху
     <button style={cellStyle}> 
       {displayCoord}
-      {children} {/* Тут будуть відображатися дочірні елементи, наприклад, твій Sticman */}
+      {children} 
     </button>
   );
 };
-

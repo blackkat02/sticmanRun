@@ -1,18 +1,18 @@
 // HomePage.jsx
-import React, { useState, useEffect } from 'react';
-import { GameBoard } from '../../components/GameBoard/GameBoard.jsx';
+import React, { useState, useEffect } from 'react'; // Import useState and useEffect
+import { GameBoard } from '../../components/GameBoard/GameBoard.jsx'; // Ensure path is correct and .jsx extension
 
 const HomePage = () => {
-  // Стан для позиції гравця: { x: координата по горизонталі, level: рівень }
-  // Встановлюємо початковий рівень (level) на 0, щоб кінь був на першому поверсі (0a)
+  // State for player position: { x: horizontal coordinate, level: vertical level }
+  // Start at level 0, which will be displayed as level 1 (first floor)
   const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 }); 
 
-  // Використовуємо useEffect для додавання та видалення слухача подій клавіатури
+  // Effect for adding and removing keyboard event listener
   useEffect(() => {
     const handleKeyDown = (event) => {
       setPlayerPosition(prevPosition => {
         let newX = prevPosition.x;
-        // Логіка руху: 'KeyD' для вперед (вправо), 'KeyA' для назад (вліво)
+        // Movement logic: 'KeyD' for forward (right), 'KeyA' for backward (left)
         if (event.code === 'KeyD') { 
           newX = prevPosition.x + 1;
         } else if (event.code === 'KeyA') { 
@@ -20,7 +20,10 @@ const HomePage = () => {
         }
 
         if (newX !== prevPosition.x) {
-          console.log(`Гравець переміщено на: X=${newX}, Рівень=${prevPosition.level}`);
+          // First log: now also shows 1-indexed level for consistency
+          console.log(`Гравець переміщено на: X=${newX}, Рівень=${prevPosition.level + 1}`);
+          // Second log: shows cell name in X-Level format (1-indexed level)
+          console.log(`Клітинка: ${newX}-${prevPosition.level + 1}`); 
           return { ...prevPosition, x: newX };
         }
         return prevPosition;
@@ -34,10 +37,18 @@ const HomePage = () => {
     };
   }, []); 
 
+  // Calculate the current cell name for display (1-indexed level)
+  const currentCellName = `${playerPosition.x}-${playerPosition.level + 1}`;
+
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
       <h1>Безкінечне Ігрове Поле</h1>
-      <p>Поточна позиція коня: X={playerPosition.x}, Рівень={playerPosition.level}</p>
+      <p>
+        {/* Display player's level as 1-indexed for consistency */}
+        Поточна позиція коня: X={playerPosition.x}, Рівень={playerPosition.level + 1}
+        <br />
+        **Поле:** {currentCellName}
+      </p>
       <GameBoard 
         playerPosition={playerPosition} 
       />
@@ -46,3 +57,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
