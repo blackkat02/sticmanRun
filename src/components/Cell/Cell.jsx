@@ -15,13 +15,11 @@ export const Cell = ({ x, y, level, children }) => {
     cursor: 'default', 
     backgroundColor: 'white',
     position: 'relative', 
-    // This transform flips the content of the cell (text, knight) back to normal orientation
-    // because the parent grid is flipped (scaleY(-1)).
-    transform: 'scaleY(-1)', 
+    // IMPORTANT: REMOVE transform: 'scaleY(-1)' from here.
+    // Text will now appear correctly without flipping, as the grid itself is not flipped.
   };
 
-  // Change coordinate display to X-Level (1-indexed level)
-  // level + 1 so that level 0 displays as 1, level 1 as 2, etc.
+  // Display coordinates as X-Level (1-indexed level)
   const displayCoord = `${x}-${level + 1}`; 
   
   return (

@@ -2,24 +2,35 @@
 import React from 'react';
 import styles from './Sticman.module.css'; 
 
-// Sticman тепер приймає 'style' пропс для позиціонування з батьківського компонента
 const Sticman = ({ positionX, positionY, level, cellSize, style }) => {
   const chessKnightSymbol = '♞'; 
 
-  // Стилі для Sticman.
-  // transform: 'scaleY(-1)' додано сюди, щоб перевернути символ коня назад,
-  // оскільки його батьківський контейнер (gridRef) перевернутий.
+  // Стилі для контейнера Sticman.
+  // Цей контейнер НЕ перевертається. Він позиціонується GameBoard.
   const sticmanCalculatedStyle = {
-    // Всі позиційні стилі (position, left, bottom, width, height, display, justify-content, align-items, zIndex)
-    // тепер передаються через пропс 'style' з GameBoard.jsx.
-    // Тут залишаємо лише ті стилі, які стосуються самого символу або його внутрішнього відображення.
-    transform: 'scaleY(-1)', // This line is crucial for flipping the knight back
+    position: 'absolute', 
+    zIndex: 5, 
+    width: `${cellSize}px`, 
+    height: `${cellSize}px`,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  };
+
+  // Стиль для самого символу коня.
+  // !!! ОСЬ ТУТ КІНЬ ПЕРЕВЕРТАЄТЬСЯ !!!
+  const knightSymbolStyle = {
+    // transform: 'scaleY(-1)' - це CSS-властивість, яка перевертає елемент по вертикалі.
+    // Значення '-1' означає інверсію по осі Y.
+    // transform: 'scaleY(-1)', 
   };
 
   return (
-    // Застосовуємо стилі з модуля CSS, а також стилі, передані через пропс 'style' з GameBoard.jsx
     <div className={styles.sticmanKnight} style={{ ...sticmanCalculatedStyle, ...style }}>
-      {chessKnightSymbol}
+      {/* Символ коня обгорнутий у <span>, до якого застосовується knightSymbolStyle */}
+      <span style={knightSymbolStyle}> 
+        {chessKnightSymbol}
+      </span>
       {/* Можна додати для дебагу поточні координати, якщо хочеш */}
       {/* <span style={{fontSize: '10px', position: 'absolute', bottom: '0'}}>
         ({positionX},{level})
@@ -29,5 +40,3 @@ const Sticman = ({ positionX, positionY, level, cellSize, style }) => {
 };
 
 export default Sticman;
-
-
