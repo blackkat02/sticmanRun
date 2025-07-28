@@ -1,60 +1,76 @@
-// HomePage.jsx
-import React, { useState, useEffect } from 'react'; // Import useState and useEffect
-import { GameBoard } from '../../components/GameBoard/GameBoard.jsx'; // Ensure path is correct and .jsx extension
+// HomePage.jsx (СКОРИГОВАНА ВЕРСІЯ)
+import React, { useState, useEffect, useRef } from 'react';
+import { GameBoard } from '../../components/GameBoard/GameBoard.jsx';
 
 const HomePage = () => {
-  // State for player position: { x: horizontal coordinate, level: vertical level }
-  // Start at level 0, which will be displayed as level 1 (first floor)
-  const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 }); 
+  const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 });
+  const [movementCooldown, setMovementCooldown] = useState(1000);
+  const lastMoveTimeRef = useRef(0);
 
-  // Effect for adding and removing keyboard event listener
   useEffect(() => {
     const handleKeyDown = (event) => {
+      const currentTime = Date.now();
+      if (currentTime - lastMoveTimeRef.current < movementCooldown) {
+        return;
+      }
       setPlayerPosition(prevPosition => {
         let newX = prevPosition.x;
-        // Movement logic: 'KeyD' for forward (right), 'KeyA' for backward (left)
-        if (event.code === 'KeyD') { 
+        let moved = false;
+        if (event.code === 'KeyD') {
           newX = prevPosition.x + 1;
-        } else if (event.code === 'KeyA') { 
+          moved = true;
+        } else if (event.code === 'KeyA') {
           newX = prevPosition.x - 1;
+          moved = true;
         }
-
-        if (newX !== prevPosition.x) {
-          // First log: now also shows 1-indexed level for consistency
+        if (moved) {
+          lastMoveTimeRef.current = currentTime;
           console.log(`Гравець переміщено на: X=${newX}, Рівень=${prevPosition.level + 1}`);
-          // Second log: shows cell name in X-Level format (1-indexed level)
-          console.log(`Клітинка: ${newX}-${prevPosition.level + 1}`); 
+          console.log(`Клітинка: ${newX}-${prevPosition.level + 1}`);
           return { ...prevPosition, x: newX };
         }
         return prevPosition;
       });
     };
-
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []); 
+  }, [movementCooldown]);
 
-  // Calculate the current cell name for display (1-indexed level)
   const currentCellName = `${playerPosition.x}-${playerPosition.level + 1}`;
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
-      <h1>Безкінечне Ігрове Поле</h1>
-      <p>
-        {/* Display player's level as 1-indexed for consistency */}
-        Поточна позиція коня: X={playerPosition.x}, Рівень={playerPosition.level + 1}
-        <br />
-        **Поле:** {currentCellName}
-      </p>
-      <GameBoard 
-        playerPosition={playerPosition} 
-      />
+    // !!! НОВИЙ ГОЛОВНИЙ КОНТЕЙНЕР - ТЕПЕР ВІН position: 'relative' !!!
+    // Його висота може бути 100vh, щоб вміст займав весь екран.
+    // overflow: hidden, щоб приховати прокрутку за межами вікна.
+    <div style={{ fontFamily: 'Arial, sans-serif', textAlign: 'center', position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+
+      {/* Контейнер для тексту - він залишається в поточному потоці */}
+      {/* Ми можемо дати йому фіксовану висоту або просто дозволити йому займати місце, яке потрібно */}
+      <div style={{ padding: '20px 0', borderBottom: '1px solid #ccc', marginBottom: '20px' }}> {/* Додав стилі для кращого візуального розділення */}
+        <h1>Безкінечне Ігрове Поле</h1>
+        <p>
+          Поточна позиція коня: X={playerPosition.x}, Рівень={playerPosition.level + 1}
+          <br />
+          **Поле:** {currentCellName}
+        </p>
+        <p>
+          **Затримка руху (мсек):** {movementCooldown} (налаштовується для 1-го рівня складності)
+        </p>
+      </div>
+
+      {/* !!! КОНТЕЙНЕР ДЛЯ GAMEBOARD - ТЕПЕР ВІН НЕ position: absolute !!! */}
+      {/* Він є дочірнім елементом головного relative контейнера. */}
+      {/* Його позиція буде автоматично після текстового блоку. */}
+      {/* Ми задамо йому ширину 100% і решту висоти, яка залишилася. */}
+      <div style={{ position: 'relative', width: '100%', height: `calc(100vh - ${200}px)` /* Приблизна висота заголовка та параграфів, налаштуй */, overflow: 'hidden' }}>
+        <GameBoard
+          playerPosition={playerPosition}
+        />
+      </div>
     </div>
   );
 };
 
 export default HomePage;
-

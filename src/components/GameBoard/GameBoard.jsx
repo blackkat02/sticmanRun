@@ -1,151 +1,150 @@
 // GameBoard.jsx
 import React, { useRef, useEffect, useState } from 'react';
-import { Cell } from '../Cell/Cell.jsx'; 
-import Sticman from '../Sticman/Sticman.jsx'; 
-import Stone from '../Stone/Stone.jsx'; 
+import { useSpring, animated } from '@react-spring/web';
+import { Cell } from '../Cell/Cell.jsx';
+import Sticman from '../Sticman/Sticman.jsx';
+import Stone from '../Stone/Stone.jsx';
 
-export const GameBoard = ({ playerPosition }) => { 
-  const cellSize = 50; // Cell size in pixels
-  const numberOfLevels = 3; // Number of vertical levels
+export const GameBoard = ({ playerPosition }) => {
+  const cellSize = 50;
+  const numberOfLevels = 3;
 
-  const boardContainerRef = useRef(null); // Ref for the outer container (visible viewport)
-  const gridRef = useRef(null); // Ref for the inner grid container (the one that moves)
-  const [containerWidth, setContainerWidth] = useState(0); // State for the container's width
+  const gameBoardRef = useRef(null);
+  const [parentContainerWidth, setParentContainerWidth] = useState(0);
 
-  // Effect to update container width on mount and window resize
   useEffect(() => {
-    const updateContainerWidth = () => {
-      if (boardContainerRef.current) {
-        setContainerWidth(boardContainerRef.current.offsetWidth);
+    const updateParentContainerWidth = () => {
+      if (gameBoardRef.current && gameBoardRef.current.parentElement) {
+        setParentContainerWidth(gameBoardRef.current.parentElement.offsetWidth);
+      } else {
+        setParentContainerWidth(window.innerWidth);
       }
     };
 
-    updateContainerWidth(); // Call on initial render
-    window.addEventListener('resize', updateContainerWidth); // Add resize listener
+    updateParentContainerWidth();
+    window.addEventListener('resize', updateParentContainerWidth);
 
     return () => {
-      window.removeEventListener('resize', updateContainerWidth); // Cleanup listener
+      window.removeEventListener('resize', updateParentContainerWidth);
     };
-  }, []); 
+  }, []);
 
-  // Calculate the number of cells to render horizontally based on container width and a buffer
-  const bufferCells = 10; // Buffer cells on each side (total buffer 20)
-  const cellsToRenderHorizontally = Math.ceil(containerWidth / cellSize) + (bufferCells * 2);
+  const bufferCells = 20; // Збільшимо буфер ще більше для надійності
 
-  // Effect to apply the scroll transformation to the grid
-  useEffect(() => {
-    if (gridRef.current && containerWidth > 0) {
-      // Calculate the pixel position of the player's logical X coordinate
-      const playerLogicalPixelX = playerPosition.x * cellSize;
+  // Логічний діапазон X-координат, який ми рендеримо.
+  // renderStartX - це мінімальна X-координата, яка буде відображена.
+  // renderEndX - це максимальна X-координата, яка буде відображена.
+  // Це гарантує, що ми завжди рендеримо достатньо клітинок навколо гравця,
+  // включаючи від'ємні координати.
+  const renderStartX = playerPosition.x - Math.floor(parentContainerWidth / (2 * cellSize)) - bufferCells;
+  const renderEndX = playerPosition.x + Math.ceil(parentContainerWidth / (2 * cellSize)) + bufferCells;
+  const totalRenderableCells = renderEndX - renderStartX;
 
-      // Calculate the horizontal scroll position needed to center the player.
-      const playerPixelOffsetInGrid = (playerPosition.x - renderStartX) * cellSize;
+  // !!! КЛЮЧОВЕ ВИПРАВЛЕННЯ: targetTranslateX має утримувати коня в центрі !!!
+  // Це означає, що коли гравець знаходиться на playerPosition.x,
+  // клітинка playerPosition.x має бути по центру батьківського контейнера.
+  // Розглянемо:
+  // (parentContainerWidth / 2) - (cellSize / 2) -> це піксельна позиція центру екрану.
+  // (playerPosition.x - renderStartX) * cellSize -> це піксельна позиція коня ВІДНОСНО початку рендереного гриду.
+  // Щоб перемістити ГРІД так, щоб кінь був по центру екрану, ми беремо центр екрану
+  // і ВІДНІМАЄМО поточну піксельну позицію коня ВІДНОСНО renderStartX.
+  const targetTranslateX = (parentContainerWidth / 2) - (cellSize / 2) - ((playerPosition.x - renderStartX) * cellSize);
 
-      // translateXValue: Value of the offset for gridRef to center the knight.
-      const translateXValue = (containerWidth / 2) - playerPixelOffsetInGrid - (cellSize / 2);
-      
-      // !!! IMPORTANT: NO scaleY(-1) here. Grid will NOT be flipped. !!!
-      gridRef.current.style.transform = `translateX(${translateXValue}px)`;
-    }
-  }, [playerPosition.x, cellSize, containerWidth, cellsToRenderHorizontally]); 
+  const gameBoardSpringProps = useSpring({
+    x: targetTranslateX,
+    config: {
+      tension: 180,
+      friction: 25,
+      mass: 1
+    },
+    immediate: playerPosition.x === 0,
+  });
 
-  // Styles for the outer game board container (the visible viewport)
-  const boardContainerStyle = {
-    height: `${numberOfLevels * cellSize}px`, 
-    overflow: 'hidden', 
-    position: 'relative', 
-    width: '100%', 
-    border: '2px solid #333', 
-    margin: '20px auto', 
-    backgroundColor: '#e0f7fa', 
+  const animatedGameBoardContainerStyle = {
+    height: `${numberOfLevels * cellSize}px`,
+    position: 'absolute',
+    left: '0px',
+    top: '0px',
+    width: `${totalRenderableCells * cellSize}px`,
+    border: '2px solid #333',
+    backgroundColor: '#e0f7fa',
   };
 
-  // Styles for the inner grid container (the one that moves)
   const gridStyle = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${cellsToRenderHorizontally}, ${cellSize}px)`,
+    gridTemplateColumns: `repeat(${totalRenderableCells}, ${cellSize}px)`,
     gridTemplateRows: `repeat(${numberOfLevels}, ${cellSize}px)`,
     gap: '0px',
-    position: 'absolute', 
-    left: '0px', 
-    // !!! IMPORTANT: Position from the bottom to make level 0 appear at the bottom !!!
-    bottom: '0px', 
-    width: `${cellsToRenderHorizontally * cellSize}px`,
-    transformOrigin: 'center center', 
-    zIndex: 1, 
+    position: 'relative',
+    left: '0px',
+    bottom: '0px',
+    width: '100%',
+    transformOrigin: 'top left',
+    zIndex: 1,
   };
 
   const cells = [];
-  const renderStartX = playerPosition.x - Math.floor(cellsToRenderHorizontally / 2);
-  const renderEndX = renderStartX + cellsToRenderHorizontally;
-
-  // !!! IMPORTANT: Loop levels in reverse order to render from top to bottom (visually) !!!
-  // This makes level 0 appear at the bottom when positioned with 'bottom' CSS property.
-  for (let level = numberOfLevels - 1; level >= 0; level--) { 
+  for (let level = numberOfLevels - 1; level >= 0; level--) {
     for (let x = renderStartX; x < renderEndX; x++) {
       let cellContent = null;
-      // Logic for random stone rendering
-      // Stones appear only on level 0 (first floor) with a 30% chance.
-      // Prevent stone on initial safe fields (x <= 3)
       if (level === 0 && x <= 3) {
-        // Do nothing, no stone on initial safe fields
-      } else if (level === 0 && Math.random() < 0.3) { // 30% chance for other level 0 cells
+        // Do nothing
+      } else if (level === 0 && Math.random() < 0.3) {
         cellContent = <Stone cellSize={cellSize} />;
       }
 
       cells.push(
         <div key={`${x}-${level}`} style={{
-          position: 'relative', 
-          display: 'flex', 
+          position: 'relative',
+          display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           width: `${cellSize}px`,
           height: `${cellSize}px`,
-          // !!! IMPORTANT: NO transform: 'scaleY(-1)' here. Cells will not be flipped. !!!
+          gridColumnStart: (x - renderStartX) + 1,
+          gridRowStart: (numberOfLevels - level),
         }}>
-          <Cell 
-            x={x} 
+          <Cell
+            x={x}
             level={level}
           >
-            {cellContent} {/* Render stone if it exists */}
+            {cellContent}
           </Cell>
         </div>
       );
     }
   }
 
-  // Calculate Sticman's position relative to the *moving grid*.
-  const sticmanRenderedX = playerPosition.x - renderStartX;
-  const sticmanLeftPx = sticmanRenderedX * cellSize;
-  // !!! IMPORTANT: Calculate Sticman's Y position relative to the bottom of the *unflipped* grid. !!!
-  // level 0 is at bottom: 0px, level 1 at bottom: 50px, etc.
-  const sticmanBottomPx = playerPosition.level * cellSize; 
+  // Позиція Sticman всередині РЕНДЕРЕНОГО гриду.
+  // Він має бути на своїй клітинці відносно renderStartX.
+  const sticmanLeftPx = (playerPosition.x - renderStartX) * cellSize;
+  const sticmanBottomPx = playerPosition.level * cellSize;
 
   return (
-    <div ref={boardContainerRef} style={boardContainerStyle}>
-      {/* Inner div with ref, to which we apply the transform */}
-      <div ref={gridRef} style={gridStyle}>
-        {cells}
-        {/* Sticman is now rendered directly inside the moving grid, positioned absolutely */}
-        <Sticman 
+    <animated.div
+        ref={gameBoardRef}
+        style={{ ...animatedGameBoardContainerStyle, x: gameBoardSpringProps.x }}
+    >
+        <div style={gridStyle}>
+            {cells}
+        </div>
+        <Sticman
           style={{
             position: 'absolute',
             left: `${sticmanLeftPx}px`,
             bottom: `${sticmanBottomPx}px`,
-            zIndex: 2, 
-            width: `${cellSize}px`, 
+            zIndex: 2,
+            width: `${cellSize}px`,
             height: `${cellSize}px`,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            // !!! IMPORTANT: NO transform: 'scaleY(-1)' here. Sticman will not be flipped by its container. !!!
           }}
-          positionX={playerPosition.x} 
-          positionY={playerPosition.level} 
-          level={playerPosition.level} 
-          cellSize={cellSize} 
+          positionX={playerPosition.x}
+          positionY={playerPosition.level}
+          level={playerPosition.level}
+          cellSize={cellSize}
         />
-      </div>
-    </div>
+    </animated.div>
   );
 };
