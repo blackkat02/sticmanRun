@@ -1,72 +1,102 @@
-// HomePage.jsx (СКОРИГОВАНА ВЕРСІЯ)
-import React, { useState, useEffect, useRef } from 'react';
+// HomePage.jsx
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameBoard } from '../../components/GameBoard/GameBoard.jsx';
 
 const HomePage = () => {
   const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 });
-  const [movementCooldown, setMovementCooldown] = useState(1000);
-  const lastMoveTimeRef = useRef(0);
+  const animationDuration = 1000;
+
+  const actionQueueRef = useRef([]); // Черга очікуваних рухів
+  const isAnimatingRef = useRef(false); // Чи активна зараз анімація
+  const isKeyPressedRef = useRef({}); // Для відстеження, чи натиснута клавіша (для анти-спаму)
+
+  // Функція для обробки наступної дії в черзі
+  const processNextAction = useCallback(() => {
+    if (actionQueueRef.current.length > 0 && !isAnimatingRef.current) {
+      const nextAction = actionQueueRef.current.shift(); // Беремо першу дію з черги
+      isAnimatingRef.current = true; // Встановлюємо, що анімація почалася
+
+      console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] Початок обробки дії з черги: ${nextAction.newLogicalX}`);
+
+      setPlayerPosition(prevPosition => ({ ...prevPosition, x: nextAction.newLogicalX }));
+    }
+  }, []);
+
+  // Callback, який GameBoard викликає, коли анімація завершилася
+  const onAnimationEnd = useCallback(() => {
+    console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] Анімація завершена. Знімаю прапор анімації.`);
+    isAnimatingRef.current = false; // Знімаємо прапор активної анімації
+    processNextAction(); // Після завершення анімації, спробуй обробити наступну дію
+  }, [processNextAction]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      const currentTime = Date.now();
-      if (currentTime - lastMoveTimeRef.current < movementCooldown) {
+      // Ігноруємо натискання, якщо це повторне натискання тієї ж клавіші (гравець тримає її затиснутою)
+      // АБО якщо клавіша вже обробляється
+      if (event.repeat || isKeyPressedRef.current[event.code]) {
         return;
       }
-      setPlayerPosition(prevPosition => {
-        let newX = prevPosition.x;
-        let moved = false;
-        if (event.code === 'KeyD') {
-          newX = prevPosition.x + 1;
-          moved = true;
-        } else if (event.code === 'KeyA') {
-          newX = prevPosition.x - 1;
-          moved = true;
-        }
-        if (moved) {
-          lastMoveTimeRef.current = currentTime;
-          console.log(`Гравець переміщено на: X=${newX}, Рівень=${prevPosition.level + 1}`);
-          console.log(`Клітинка: ${newX}-${prevPosition.level + 1}`);
-          return { ...prevPosition, x: newX };
-        }
-        return prevPosition;
-      });
+
+      let newLogicalX = playerPosition.x;
+      let actionTriggered = false;
+
+      if (event.code === 'KeyD') {
+        newLogicalX = playerPosition.x + 1;
+        actionTriggered = true;
+      } else if (event.code === 'KeyA') {
+        newLogicalX = playerPosition.x - 1;
+        actionTriggered = true;
+      }
+
+      if (actionTriggered) {
+        // Позначаємо, що ця клавіша зараз натиснута
+        isKeyPressedRef.current[event.code] = true;
+
+        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] Кнопка натиснута: ${event.code}. Додаю до черги: ${newLogicalX}.`);
+
+        // Додаємо дію до черги
+        actionQueueRef.current.push({ newLogicalX });
+
+        // Спробуймо одразу обробити чергу (якщо анімація не йде)
+        processNextAction();
+      }
     };
+
+    const handleKeyUp = (event) => {
+      // Знімаємо прапор, коли клавіша відпущена
+      isKeyPressedRef.current[event.code] = false;
+    };
+
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp); // Додаємо обробник для відпускання клавіші
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [movementCooldown]);
+  }, [playerPosition, processNextAction]);
 
   const currentCellName = `${playerPosition.x}-${playerPosition.level + 1}`;
 
   return (
-    // !!! НОВИЙ ГОЛОВНИЙ КОНТЕЙНЕР - ТЕПЕР ВІН position: 'relative' !!!
-    // Його висота може бути 100vh, щоб вміст займав весь екран.
-    // overflow: hidden, щоб приховати прокрутку за межами вікна.
     <div style={{ fontFamily: 'Arial, sans-serif', textAlign: 'center', position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-
-      {/* Контейнер для тексту - він залишається в поточному потоці */}
-      {/* Ми можемо дати йому фіксовану висоту або просто дозволити йому займати місце, яке потрібно */}
-      <div style={{ padding: '20px 0', borderBottom: '1px solid #ccc', marginBottom: '20px' }}> {/* Додав стилі для кращого візуального розділення */}
+      <div style={{ padding: '20px 0', borderBottom: '1px solid #ccc', marginBottom: '20px' }}>
         <h1>Безкінечне Ігрове Поле</h1>
         <p>
-          Поточна позиція коня: X={playerPosition.x}, Рівень={playerPosition.level + 1}
+          Поточна логічна позиція коня: X={playerPosition.x}, Рівень={playerPosition.level + 1}
           <br />
           **Поле:** {currentCellName}
         </p>
         <p>
-          **Затримка руху (мсек):** {movementCooldown} (налаштовується для 1-го рівня складності)
+          **Тривалість анімації (мсек):** {animationDuration}
         </p>
       </div>
 
-      {/* !!! КОНТЕЙНЕР ДЛЯ GAMEBOARD - ТЕПЕР ВІН НЕ position: absolute !!! */}
-      {/* Він є дочірнім елементом головного relative контейнера. */}
-      {/* Його позиція буде автоматично після текстового блоку. */}
-      {/* Ми задамо йому ширину 100% і решту висоти, яка залишилася. */}
-      <div style={{ position: 'relative', width: '100%', height: `calc(100vh - ${200}px)` /* Приблизна висота заголовка та параграфів, налаштуй */, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', height: `calc(100vh - ${200}px)` /* НАЛАШТУЙ ЦЮ ВИСОТУ ПІД СЕБЕ */, overflow: 'hidden' }}>
         <GameBoard
           playerPosition={playerPosition}
+          animationDuration={animationDuration}
+          onAnimationEnd={onAnimationEnd}
         />
       </div>
     </div>

@@ -1,16 +1,18 @@
 // GameBoard.jsx
 import React, { useRef, useEffect, useState } from 'react';
-import { useSpring, animated } from '@react-spring/web';
 import { Cell } from '../Cell/Cell.jsx';
 import Sticman from '../Sticman/Sticman.jsx';
 import Stone from '../Stone/Stone.jsx';
 
-export const GameBoard = ({ playerPosition }) => {
+export const GameBoard = ({ playerPosition, animationDuration, onAnimationEnd }) => {
   const cellSize = 50;
   const numberOfLevels = 3;
 
   const gameBoardRef = useRef(null);
   const [parentContainerWidth, setParentContainerWidth] = useState(0);
+
+  const [currentTransformX, setCurrentTransformX] = useState(0);
+  const isInitialRenderRef = useRef(true); // Новий прапор для першого рендера
 
   useEffect(() => {
     const updateParentContainerWidth = () => {
@@ -29,38 +31,51 @@ export const GameBoard = ({ playerPosition }) => {
     };
   }, []);
 
-  const bufferCells = 20; // Збільшимо буфер ще більше для надійності
+  const initialRenderStartX = -500;
+  const initialRenderEndX = 500;
 
-  // Логічний діапазон X-координат, який ми рендеримо.
-  // renderStartX - це мінімальна X-координата, яка буде відображена.
-  // renderEndX - це максимальна X-координата, яка буде відображена.
-  // Це гарантує, що ми завжди рендеримо достатньо клітинок навколо гравця,
-  // включаючи від'ємні координати.
-  const renderStartX = playerPosition.x - Math.floor(parentContainerWidth / (2 * cellSize)) - bufferCells;
-  const renderEndX = playerPosition.x + Math.ceil(parentContainerWidth / (2 * cellSize)) + bufferCells;
+  const renderStartX = initialRenderStartX;
+  const renderEndX = initialRenderEndX;
   const totalRenderableCells = renderEndX - renderStartX;
 
-  // !!! КЛЮЧОВЕ ВИПРАВЛЕННЯ: targetTranslateX має утримувати коня в центрі !!!
-  // Це означає, що коли гравець знаходиться на playerPosition.x,
-  // клітинка playerPosition.x має бути по центру батьківського контейнера.
-  // Розглянемо:
-  // (parentContainerWidth / 2) - (cellSize / 2) -> це піксельна позиція центру екрану.
-  // (playerPosition.x - renderStartX) * cellSize -> це піксельна позиція коня ВІДНОСНО початку рендереного гриду.
-  // Щоб перемістити ГРІД так, щоб кінь був по центру екрану, ми беремо центр екрану
-  // і ВІДНІМАЄМО поточну піксельну позицію коня ВІДНОСНО renderStartX.
-  const targetTranslateX = (parentContainerWidth / 2) - (cellSize / 2) - ((playerPosition.x - renderStartX) * cellSize);
+  const targetPixelPosition = (parentContainerWidth / 2) - (cellSize / 2) - ((playerPosition.x - renderStartX) * cellSize);
 
-  const gameBoardSpringProps = useSpring({
-    x: targetTranslateX,
-    config: {
-      tension: 180,
-      friction: 25,
-      mass: 1
-    },
-    immediate: playerPosition.x === 0,
-  });
+  useEffect(() => {
+    // Якщо це перший рендер і transformX ще не встановлений або дорівнює 0,
+    // просто встановлюємо його без анімації та одразу знімаємо прапор.
+    // Це дозволить уникнути небажаних onAnimationEnd на старті.
+    if (isInitialRenderRef.current) {
+      setCurrentTransformX(targetPixelPosition);
+      console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: Initial render, setting transform to ${targetPixelPosition}`);
+      isInitialRenderRef.current = false; // Позначаємо, що початковий рендер завершено
+      return; // Виходимо, не запускаємо RAF для анімації при першому рендері
+    }
 
-  const animatedGameBoardContainerStyle = {
+    // Якщо playerPosition.x змінився, запускаємо анімацію
+    let frameId;
+    frameId = requestAnimationFrame(() => {
+      frameId = requestAnimationFrame(() => {
+        setCurrentTransformX(targetPixelPosition);
+        // GameBoard.jsx, рядок 59
+        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: playerPosition.x=${playerPosition.x}, Setting transform to ${targetPixelPosition}`);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [playerPosition.x, targetPixelPosition]); // currentTransformX прибрано з залежностей
+
+  const handleTransitionEnd = (event) => {
+    // Перевіряємо, що анімація завершилася для властивості 'transform'
+    // І що це не "початковий рендер", який не мав анімуватися
+    // І що поточна позиція після анімації відповідає цільовій
+    if (event.propertyName === 'transform' && onAnimationEnd && !isInitialRenderRef.current && currentTransformX === targetPixelPosition) {
+      onAnimationEnd();
+    }
+  };
+
+  const gameBoardStyle = {
     height: `${numberOfLevels * cellSize}px`,
     position: 'absolute',
     left: '0px',
@@ -68,6 +83,9 @@ export const GameBoard = ({ playerPosition }) => {
     width: `${totalRenderableCells * cellSize}px`,
     border: '2px solid #333',
     backgroundColor: '#e0f7fa',
+    // transition застосовується тільки після першого рендеру
+    transition: isInitialRenderRef.current ? 'none' : `transform ${animationDuration / 1000}s ease-out`,
+    transform: `translateX(${currentTransformX}px)`,
   };
 
   const gridStyle = {
@@ -115,36 +133,35 @@ export const GameBoard = ({ playerPosition }) => {
     }
   }
 
-  // Позиція Sticman всередині РЕНДЕРЕНОГО гриду.
-  // Він має бути на своїй клітинці відносно renderStartX.
   const sticmanLeftPx = (playerPosition.x - renderStartX) * cellSize;
   const sticmanBottomPx = playerPosition.level * cellSize;
 
   return (
-    <animated.div
-        ref={gameBoardRef}
-        style={{ ...animatedGameBoardContainerStyle, x: gameBoardSpringProps.x }}
+    <div
+      ref={gameBoardRef}
+      style={gameBoardStyle}
+      onTransitionEnd={handleTransitionEnd}
     >
-        <div style={gridStyle}>
-            {cells}
-        </div>
-        <Sticman
-          style={{
-            position: 'absolute',
-            left: `${sticmanLeftPx}px`,
-            bottom: `${sticmanBottomPx}px`,
-            zIndex: 2,
-            width: `${cellSize}px`,
-            height: `${cellSize}px`,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          positionX={playerPosition.x}
-          positionY={playerPosition.level}
-          level={playerPosition.level}
-          cellSize={cellSize}
-        />
-    </animated.div>
+      <div style={gridStyle}>
+        {cells}
+      </div>
+      <Sticman
+        style={{
+          position: 'absolute',
+          left: `${sticmanLeftPx}px`,
+          bottom: `${sticmanBottomPx}px`,
+          zIndex: 2,
+          width: `${cellSize}px`,
+          height: `${cellSize}px`,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        positionX={playerPosition.x}
+        positionY={playerPosition.level}
+        level={playerPosition.level}
+        cellSize={cellSize}
+      />
+    </div>
   );
 };
