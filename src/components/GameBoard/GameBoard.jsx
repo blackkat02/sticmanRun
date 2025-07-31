@@ -1,5 +1,5 @@
 // GameBoard.jsx
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Cell } from '../Cell/Cell.jsx';
 import Sticman from '../Sticman/Sticman.jsx';
 import Stone from '../Stone/Stone.jsx';
@@ -12,7 +12,8 @@ export const GameBoard = ({ playerPosition, animationDuration, onAnimationEnd })
   const [parentContainerWidth, setParentContainerWidth] = useState(0);
 
   const [currentTransformX, setCurrentTransformX] = useState(0);
-  const isInitialRenderRef = useRef(true); // Новий прапор для першого рендера
+  const isInitialRenderRef = useRef(true);
+  const prevPlayerPositionXRef = useRef(playerPosition.x);
 
   useEffect(() => {
     const updateParentContainerWidth = () => {
@@ -32,48 +33,59 @@ export const GameBoard = ({ playerPosition, animationDuration, onAnimationEnd })
   }, []);
 
   const initialRenderStartX = -500;
-  const initialRenderEndX = 500;
-
   const renderStartX = initialRenderStartX;
-  const renderEndX = initialRenderEndX;
+  const renderEndX = 500;
   const totalRenderableCells = renderEndX - renderStartX;
 
-  const targetPixelPosition = (parentContainerWidth / 2) - (cellSize / 2) - ((playerPosition.x - renderStartX) * cellSize);
-
   useEffect(() => {
-    // Якщо це перший рендер і transformX ще не встановлений або дорівнює 0,
-    // просто встановлюємо його без анімації та одразу знімаємо прапор.
-    // Це дозволить уникнути небажаних onAnimationEnd на старті.
+    const newTargetPixelPosition = (parentContainerWidth / 2) - (cellSize / 2) - ((playerPosition.x - renderStartX) * cellSize);
+
+    // 1. Початковий рендер
     if (isInitialRenderRef.current) {
-      setCurrentTransformX(targetPixelPosition);
-      console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: Initial render, setting transform to ${targetPixelPosition}`);
-      isInitialRenderRef.current = false; // Позначаємо, що початковий рендер завершено
-      return; // Виходимо, не запускаємо RAF для анімації при першому рендері
+        setCurrentTransformX(newTargetPixelPosition);
+        isInitialRenderRef.current = false;
+        prevPlayerPositionXRef.current = playerPosition.x;
+        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: Initial render, setting transform to ${newTargetPixelPosition}`);
+        return;
     }
 
-    // Якщо playerPosition.x змінився, запускаємо анімацію
-    let frameId;
-    frameId = requestAnimationFrame(() => {
-      frameId = requestAnimationFrame(() => {
-        setCurrentTransformX(targetPixelPosition);
-        // GameBoard.jsx, рядок 59
-        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: playerPosition.x=${playerPosition.x}, Setting transform to ${targetPixelPosition}`);
-      });
-    });
+    // 2. Зміна playerPosition.x - запускаємо анімацію
+    if (prevPlayerPositionXRef.current !== playerPosition.x) {
+        let frameId;
+        frameId = requestAnimationFrame(() => {
+            frameId = requestAnimationFrame(() => {
+                setCurrentTransformX(newTargetPixelPosition);
+                console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: playerPosition.x=${playerPosition.x}, Setting transform to ${newTargetPixelPosition} (animated)`);
+            });
+        });
+        prevPlayerPositionXRef.current = playerPosition.x;
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }
 
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
-  }, [playerPosition.x, targetPixelPosition]); // currentTransformX прибрано з залежностей
+    // 3. Зміна розміру вікна, але playerPosition.x не змінився - миттєвий snap
+    if (currentTransformX !== newTargetPixelPosition) {
+        const boardElement = gameBoardRef.current;
+        if (boardElement) {
+            boardElement.style.transition = 'none'; // Вимикаємо анімацію
+            void boardElement.offsetWidth; // Примусовий рефлоу
+            boardElement.style.transform = `translateX(${newTargetPixelPosition}px)`;
+            boardElement.style.transition = `transform ${animationDuration / 1000}s ease-out`; // Відновлюємо
+            setCurrentTransformX(newTargetPixelPosition); // Оновлюємо стан React
+        }
+        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] GameBoard: Container resized (player X same), setting transform to ${newTargetPixelPosition} (no transition).`);
+        return;
+    }
 
-  const handleTransitionEnd = (event) => {
-    // Перевіряємо, що анімація завершилася для властивості 'transform'
-    // І що це не "початковий рендер", який не мав анімуватися
-    // І що поточна позиція після анімації відповідає цільовій
-    if (event.propertyName === 'transform' && onAnimationEnd && !isInitialRenderRef.current && currentTransformX === targetPixelPosition) {
+  }, [playerPosition.x, parentContainerWidth, animationDuration, cellSize, renderStartX, currentTransformX]);
+
+  const handleTransitionEnd = useCallback((event) => {
+    const expectedTarget = (parentContainerWidth / 2) - (cellSize / 2) - ((playerPosition.x - renderStartX) * cellSize);
+    if (event.propertyName === 'transform' && onAnimationEnd && currentTransformX === expectedTarget) {
       onAnimationEnd();
     }
-  };
+  }, [onAnimationEnd, currentTransformX, playerPosition.x, parentContainerWidth, cellSize, renderStartX]);
 
   const gameBoardStyle = {
     height: `${numberOfLevels * cellSize}px`,
@@ -83,8 +95,7 @@ export const GameBoard = ({ playerPosition, animationDuration, onAnimationEnd })
     width: `${totalRenderableCells * cellSize}px`,
     border: '2px solid #333',
     backgroundColor: '#e0f7fa',
-    // transition застосовується тільки після першого рендеру
-    transition: isInitialRenderRef.current ? 'none' : `transform ${animationDuration / 1000}s ease-out`,
+    transition: `transform ${animationDuration / 1000}s ease-out`,
     transform: `translateX(${currentTransformX}px)`,
   };
 

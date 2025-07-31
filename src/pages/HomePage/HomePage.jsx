@@ -8,19 +8,19 @@ const HomePage = () => {
 
   const actionQueueRef = useRef([]); // Черга очікуваних рухів
   const isAnimatingRef = useRef(false); // Чи активна зараз анімація
-  const isKeyPressedRef = useRef({}); // Для відстеження, чи натиснута клавіша (для анти-спаму)
 
   // Функція для обробки наступної дії в черзі
   const processNextAction = useCallback(() => {
+    // Якщо черга не пуста і анімація не активна, беремо наступну дію
     if (actionQueueRef.current.length > 0 && !isAnimatingRef.current) {
-      const nextAction = actionQueueRef.current.shift(); // Беремо першу дію з черги
       isAnimatingRef.current = true; // Встановлюємо, що анімація почалася
+      const nextAction = actionQueueRef.current.shift(); // Беремо першу дію з черги
 
       console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] Початок обробки дії з черги: ${nextAction.newLogicalX}`);
 
       setPlayerPosition(prevPosition => ({ ...prevPosition, x: nextAction.newLogicalX }));
     }
-  }, []);
+  }, []); // Пусті залежності, бо посилаємося тільки на useRef
 
   // Callback, який GameBoard викликає, коли анімація завершилася
   const onAnimationEnd = useCallback(() => {
@@ -30,14 +30,16 @@ const HomePage = () => {
   }, [processNextAction]);
 
   useEffect(() => {
+    // Цей useEffect тепер не залежить від playerPosition,
+    // тому обробники handleKeyDown/handleKeyUp реєструються лише один раз
     const handleKeyDown = (event) => {
       // Ігноруємо натискання, якщо це повторне натискання тієї ж клавіші (гравець тримає її затиснутою)
-      // АБО якщо клавіша вже обробляється
-      if (event.repeat || isKeyPressedRef.current[event.code]) {
+      // `event.repeat` спрацьовує, якщо клавіша утримується, і це найнадійніший спосіб уникнути "спаму".
+      if (event.repeat) {
         return;
       }
-
-      let newLogicalX = playerPosition.x;
+      
+      let newLogicalX = playerPosition.x; // playerPosition буде актуальним на момент рендера
       let actionTriggered = false;
 
       if (event.code === 'KeyD') {
@@ -49,32 +51,22 @@ const HomePage = () => {
       }
 
       if (actionTriggered) {
-        // Позначаємо, що ця клавіша зараз натиснута
-        isKeyPressedRef.current[event.code] = true;
-
-        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] Кнопка натиснута: ${event.code}. Додаю до черги: ${newLogicalX}.`);
-
         // Додаємо дію до черги
         actionQueueRef.current.push({ newLogicalX });
+
+        console.log(`[${new Date().toLocaleTimeString('uk-UA', { hour12: false, second: '2-digit', fractionalSecondDigits: 3 })}] Кнопка натиснута: ${event.code}. Додаю до черги: ${newLogicalX}.`);
 
         // Спробуймо одразу обробити чергу (якщо анімація не йде)
         processNextAction();
       }
     };
 
-    const handleKeyUp = (event) => {
-      // Знімаємо прапор, коли клавіша відпущена
-      isKeyPressedRef.current[event.code] = false;
-    };
-
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp); // Додаємо обробник для відпускання клавіші
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [playerPosition, processNextAction]);
+  }, [playerPosition.x, processNextAction]); // Залишаємо playerPosition.x, щоб `handleKeyDown` мав актуальне значення
 
   const currentCellName = `${playerPosition.x}-${playerPosition.level + 1}`;
 
