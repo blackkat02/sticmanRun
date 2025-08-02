@@ -1,5 +1,5 @@
 // GameBoard.jsx
-import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useRef, useState, useImperativeHandle, forwardRef, useLayoutEffect, useEffect } from 'react';
 import { Cell } from '../Cell/Cell.jsx';
 import Sticman from '../Sticman/Sticman.jsx';
 import Stone from '../Stone/Stone.jsx';
@@ -11,39 +11,47 @@ export const GameBoard = forwardRef(({ playerPosition, animationDuration, onAnim
   const gameBoardRef = useRef(null);
   const [parentContainerWidth, setParentContainerWidth] = useState(0);
 
-  const currentTransformX = useRef(0);
+  // Ініціалізуємо null, щоб відрізняти від 0px
+  let currentTransformX = useRef(null);
 
   useImperativeHandle(ref, () => ({
     movePlayer: (newLogicalX, animate = true) => {
-        const newTargetPixelPosition = (parentContainerWidth / 2) - (newLogicalX * cellSize) - (cellSize / 2);
+      if (parentContainerWidth === 0) {
+        return;
+      }
+      
+      const newTargetPixelPosition = (parentContainerWidth / 2) - (newLogicalX * cellSize) - (cellSize / 2);
 
-        if (gameBoardRef.current) {
-            if (currentTransformX.current === newTargetPixelPosition) {
-                return;
-            }
+      if (gameBoardRef.current) {
+          // Якщо це перший рендер, не перевіряємо на рівність
+          const isInitialRender = currentTransformX.current === null;
+          if (!isInitialRender && currentTransformX.current === newTargetPixelPosition) {
+              return;
+          }
 
-            if (animate) {
-                gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
-            } else {
-                gameBoardRef.current.style.transition = 'none';
-            }
+          if (animate && !isInitialRender) {
+              gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
+          } else {
+              gameBoardRef.current.style.transition = 'none';
+          }
 
-            gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
-            currentTransformX.current = newTargetPixelPosition;
+          gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
+          currentTransformX.current = newTargetPixelPosition;
 
-            if (!animate) {
-                onAnimationEnd();
-            }
-        }
+          if (!animate || isInitialRender) {
+              onAnimationEnd();
+          }
+      }
     },
   }));
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const updateParentContainerWidth = () => {
       if (gameBoardRef.current && gameBoardRef.current.parentElement) {
-        setParentContainerWidth(gameBoardRef.current.parentElement.offsetWidth);
-      } else {
-        setParentContainerWidth(window.innerWidth);
+        const newWidth = gameBoardRef.current.parentElement.offsetWidth;
+        if (newWidth > 0 && newWidth !== parentContainerWidth) {
+          setParentContainerWidth(newWidth);
+        }
       }
     };
     updateParentContainerWidth();
@@ -51,7 +59,14 @@ export const GameBoard = forwardRef(({ playerPosition, animationDuration, onAnim
     return () => {
       window.removeEventListener('resize', updateParentContainerWidth);
     };
-  }, []);
+  }, [parentContainerWidth]);
+
+  // Запускаємо початкове позиціонування тільки коли ширина контейнера відома
+  useEffect(() => {
+    if (parentContainerWidth > 0 && gameBoardRef.current) {
+      ref.current.movePlayer(playerPosition.x, false);
+    }
+  }, [parentContainerWidth, playerPosition.x, ref]);
 
   const totalRenderableCells = 1000;
   const renderStartX = -500;
