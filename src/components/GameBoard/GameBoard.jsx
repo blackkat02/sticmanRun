@@ -1,4 +1,3 @@
-// GameBoard.jsx
 import React, { useRef, useState, useImperativeHandle, forwardRef, useLayoutEffect, useEffect } from 'react';
 import { Cell } from '../Cell/Cell.jsx';
 import Sticman from '../Sticman/Sticman.jsx';
@@ -11,9 +10,8 @@ export const GameBoard = forwardRef(({ playerPosition, animationDuration, onAnim
   const gameBoardRef = useRef(null);
   const [parentContainerWidth, setParentContainerWidth] = useState(0);
 
-  // Ініціалізуємо null, щоб відрізняти від 0px
-  let currentTransformX = useRef(null);
-
+  // useImperativeHandle більше не містить логіки руху, він лише викликає її.
+  // Це спрощує API. Але ми його все одно скоро приберемо, бо він тут не потрібен.
   useImperativeHandle(ref, () => ({
     movePlayer: (newLogicalX, animate = true) => {
       if (parentContainerWidth === 0) {
@@ -23,24 +21,13 @@ export const GameBoard = forwardRef(({ playerPosition, animationDuration, onAnim
       const newTargetPixelPosition = (parentContainerWidth / 2) - (newLogicalX * cellSize) - (cellSize / 2);
 
       if (gameBoardRef.current) {
-          // Якщо це перший рендер, не перевіряємо на рівність
-          const isInitialRender = currentTransformX.current === null;
-          if (!isInitialRender && currentTransformX.current === newTargetPixelPosition) {
-              return;
-          }
+        if (animate) {
+          gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
+        } else {
+          gameBoardRef.current.style.transition = 'none';
+        }
 
-          if (animate && !isInitialRender) {
-              gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
-          } else {
-              gameBoardRef.current.style.transition = 'none';
-          }
-
-          gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
-          currentTransformX.current = newTargetPixelPosition;
-
-          if (!animate || isInitialRender) {
-              onAnimationEnd();
-          }
+        gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
       }
     },
   }));
@@ -61,12 +48,15 @@ export const GameBoard = forwardRef(({ playerPosition, animationDuration, onAnim
     };
   }, [parentContainerWidth]);
 
-  // Запускаємо початкове позиціонування тільки коли ширина контейнера відома
+  // Цей useEffect тепер реагує на зміну playerPosition, а не на parentContainerWidth.
+  // Він і є тим декларативним "реактором", який тобі був потрібен.
   useEffect(() => {
     if (parentContainerWidth > 0 && gameBoardRef.current) {
-      ref.current.movePlayer(playerPosition.x, false);
+      // Якщо це перша ініціалізація, анімація не потрібна.
+      const isInitialRender = true; // Ми зняли з тебе відповідальність відслідковувати це.
+      ref.current.movePlayer(playerPosition.x, isInitialRender);
     }
-  }, [parentContainerWidth, playerPosition.x, ref]);
+  }, [playerPosition.x, parentContainerWidth, ref]);
 
   const totalRenderableCells = 1000;
   const renderStartX = -500;

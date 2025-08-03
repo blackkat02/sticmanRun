@@ -8,7 +8,6 @@ const Stone = ({ cellSize }) => {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    // !!! ВИДАЛЯЄМО scaleY(-1) - воно більше не потрібне, оскільки батьківський елемент не перевернутий !!!
     transform: 'translate(-50%, -50%)', // Залишаємо тільки центрування
     fontSize: `${cellSize * 0.7}px`,
     lineHeight: 1,
