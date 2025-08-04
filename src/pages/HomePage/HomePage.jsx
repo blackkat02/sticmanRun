@@ -6,20 +6,17 @@ const HomePage = () => {
   const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 });
   const animationDuration = 1000;
 
+  // Рефи для gameBoard все ще потрібні, але без імперативних методів
   const gameBoardRef = useRef(null);
-  const isAnimatingRef = useRef(false);
 
-  // Цей колбек тепер просто сигналізує про завершення анімації.
-  // Стан playerPosition вже оновлений.
-  const onAnimationEnd = useCallback(() => {
-    isAnimatingRef.current = false;
-  }, []);
+  // onAnimationEnd нам також більше не потрібен, бо isAnimatingRef зник
+  // Тому і onAnimationEnd не має сенсу
 
   // Використовуємо useCallback, щоб функція handleKeyDown не змінювалася
   // при кожному рендері, якщо playerPosition не змінився.
   const handleKeyDown = useCallback((event) => {
-    // Ігноруємо, якщо клавіша затиснута або триває анімація
-    if (event.repeat || isAnimatingRef.current) {
+    // Ігноруємо, якщо клавіша затиснута. Блокування isAnimatingRef більше немає.
+    if (event.repeat) {
       return;
     }
     
@@ -33,8 +30,7 @@ const HomePage = () => {
 
     // Якщо позиція змінюється, оновлюємо стан.
     if (newX !== playerPosition.x) {
-      isAnimatingRef.current = true;
-      setPlayerPosition({ ...playerPosition, x: newX }); // Декларативно оновлюємо позицію
+      setPlayerPosition({ ...playerPosition, x: newX });
     }
   }, [playerPosition]);
 
@@ -65,9 +61,9 @@ const HomePage = () => {
       <div style={{ position: 'relative', width: '100%', height: `calc(100vh - ${200}px)`, overflow: 'hidden' }}>
         <GameBoard
           ref={gameBoardRef}
-          playerPosition={playerPosition} // Передаємо єдине джерело істини
+          playerPosition={playerPosition}
           animationDuration={animationDuration}
-          onAnimationEnd={onAnimationEnd}
+          // onAnimationEnd більше не потрібен
         />
       </div>
     </div>
