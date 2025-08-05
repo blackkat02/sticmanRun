@@ -5,15 +5,18 @@ const HomePage = () => {
   const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 });
   const [boardState, setBoardState] = useState(new Map());
   const animationDuration = 1000;
-  const gameBoardRef = useRef(null);
 
-  // useRef для доступу до актуального стану дошки в обробнику подій
   const boardStateRef = useRef(boardState);
+  const playerPositionRef = useRef(playerPosition);
+  
   useEffect(() => {
     boardStateRef.current = boardState;
   }, [boardState]);
+  
+  useEffect(() => {
+    playerPositionRef.current = playerPosition;
+  }, [playerPosition]);
 
-  // Функція для ініціалізації дошки
   const initializeBoard = useCallback(() => {
     const board = new Map();
     for (let x = 0; x < 500; x++) {
@@ -33,35 +36,36 @@ const HomePage = () => {
     initializeBoard();
   }, [initializeBoard]);
 
-  // Оновлений обробник подій, який використовує useRef
   const handleKeyDown = useCallback((event) => {
-    if (event.repeat) return;
+    if (event.repeat) {
+      return;
+    }
     
-    let newX = playerPosition.x;
-    let newLevel = playerPosition.level;
+    let newX = playerPositionRef.current.x;
+    let newLevel = playerPositionRef.current.level;
 
     if (event.code === 'KeyD') newX += 1;
     else if (event.code === 'KeyA') newX -= 1;
 
-    // Отримуємо найновіший стан дошки з рефа
-    const currentBoard = boardStateRef.current;
-    const targetCell = currentBoard.get(`${newX}-${newLevel}`);
-
-    if (targetCell && targetCell.content === 'stone') {
-      return;
-    }
+    // // !!! Тимчасово відключено: каміння не є перешкодою !!!
+    // const currentBoard = boardStateRef.current;
+    // const targetCell = currentBoard.get(`${newX}-${newLevel}`);
+    // if (targetCell && targetCell.content === 'stone') {
+    //   console.log('--- Move blocked! Cannot move to a stone. Player position remains unchanged. ---');
+    //   return;
+    // }
     
-    if (newX !== playerPosition.x || newLevel !== playerPosition.level) {
+    if (newX !== playerPositionRef.current.x || newLevel !== playerPositionRef.current.level) {
       setPlayerPosition({ x: newX, level: newLevel });
     }
-  }, [playerPosition]);
+  }, []);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleKeyDown]);
+  }, []);
 
   const currentCellName = `${playerPosition.x}-${playerPosition.level + 1}`;
 
@@ -81,7 +85,6 @@ const HomePage = () => {
       <div style={{ position: 'relative', width: '100%', height: `calc(100vh - ${200}px)`, overflow: 'hidden' }}>
         {boardState.size > 0 && (
           <GameBoard
-            ref={gameBoardRef}
             boardState={boardState}
             playerPosition={playerPosition}
             animationDuration={animationDuration}
