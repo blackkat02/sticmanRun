@@ -2,40 +2,60 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameBoard } from '../../components/GameBoard/GameBoard.jsx';
 
 const HomePage = () => {
-  // Єдине джерело істини для позиції гравця.
   const [playerPosition, setPlayerPosition] = useState({ x: 0, level: 0 });
+  const [boardState, setBoardState] = useState(new Map());
   const animationDuration = 1000;
-
-  // Рефи для gameBoard все ще потрібні, але без імперативних методів
   const gameBoardRef = useRef(null);
 
-  // onAnimationEnd нам також більше не потрібен, бо isAnimatingRef зник
-  // Тому і onAnimationEnd не має сенсу
+  // useRef для доступу до актуального стану дошки в обробнику подій
+  const boardStateRef = useRef(boardState);
+  useEffect(() => {
+    boardStateRef.current = boardState;
+  }, [boardState]);
 
-  // Використовуємо useCallback, щоб функція handleKeyDown не змінювалася
-  // при кожному рендері, якщо playerPosition не змінився.
+  // Функція для ініціалізації дошки
+  const initializeBoard = useCallback(() => {
+    const board = new Map();
+    for (let x = 0; x < 500; x++) {
+      for (let level = 0; level < 3; level++) {
+        let content = null;
+        if (level === 0 && x > 3 && Math.random() < 0.3) {
+            content = 'stone';
+        }
+        const key = `${x}-${level}`;
+        board.set(key, { x, level, content });
+      }
+    }
+    setBoardState(board);
+  }, []);
+
+  useEffect(() => {
+    initializeBoard();
+  }, [initializeBoard]);
+
+  // Оновлений обробник подій, який використовує useRef
   const handleKeyDown = useCallback((event) => {
-    // Ігноруємо, якщо клавіша затиснута. Блокування isAnimatingRef більше немає.
-    if (event.repeat) {
+    if (event.repeat) return;
+    
+    let newX = playerPosition.x;
+    let newLevel = playerPosition.level;
+
+    if (event.code === 'KeyD') newX += 1;
+    else if (event.code === 'KeyA') newX -= 1;
+
+    // Отримуємо найновіший стан дошки з рефа
+    const currentBoard = boardStateRef.current;
+    const targetCell = currentBoard.get(`${newX}-${newLevel}`);
+
+    if (targetCell && targetCell.content === 'stone') {
       return;
     }
     
-    let newX = playerPosition.x;
-
-    if (event.code === 'KeyD') {
-      newX += 1;
-    } else if (event.code === 'KeyA') {
-      newX -= 1;
-    }
-
-    // Якщо позиція змінюється, оновлюємо стан.
-    if (newX !== playerPosition.x) {
-      setPlayerPosition({ ...playerPosition, x: newX });
+    if (newX !== playerPosition.x || newLevel !== playerPosition.level) {
+      setPlayerPosition({ x: newX, level: newLevel });
     }
   }, [playerPosition]);
 
-  // Додаємо і видаляємо слухача подій.
-  // Цей useEffect тепер чистий і зрозумілий.
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -59,12 +79,14 @@ const HomePage = () => {
         </p>
       </div>
       <div style={{ position: 'relative', width: '100%', height: `calc(100vh - ${200}px)`, overflow: 'hidden' }}>
-        <GameBoard
-          ref={gameBoardRef}
-          playerPosition={playerPosition}
-          animationDuration={animationDuration}
-          // onAnimationEnd більше не потрібен
-        />
+        {boardState.size > 0 && (
+          <GameBoard
+            ref={gameBoardRef}
+            boardState={boardState}
+            playerPosition={playerPosition}
+            animationDuration={animationDuration}
+          />
+        )}
       </div>
     </div>
   );

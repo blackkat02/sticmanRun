@@ -1,65 +1,92 @@
-import React, { useRef, useState, forwardRef, useLayoutEffect, useEffect, useCallback } from 'react';
+import React, { useRef, useState, forwardRef, useLayoutEffect, useCallback, useMemo } from 'react';
 import { Cell } from '../Cell/Cell.jsx';
 import Sticman from '../Sticman/Sticman.jsx';
 import Stone from '../Stone/Stone.jsx';
+import { useParentContainerWidth } from '../../hooks/useParentContainerWidth.js';
+import { useViewportWidth } from '../../hooks/useViewportWidth.js';
 
-export const GameBoard = forwardRef(({ playerPosition, animationDuration }, ref) => {
+export const GameBoard = forwardRef(({ boardState, playerPosition, animationDuration }, ref) => {
   const cellSize = 50;
   const numberOfLevels = 3;
-  
-  const gameBoardRef = useRef(null);
-  const [parentContainerWidth, setParentContainerWidth] = useState(0);
+
+  const [gameBoardRef, parentContainerWidth] = useParentContainerWidth();
+  const viewportWidth = useViewportWidth();
 
   const calculatePosition = useCallback((logicalX) => {
-    // Важливо: перевіряємо, що parentContainerWidth > 0, інакше повертаємо 0, щоб уникнути помилок
     if (parentContainerWidth === 0) return 0;
     return (parentContainerWidth / 2) - (logicalX * cellSize) - (cellSize / 2);
   }, [parentContainerWidth, cellSize]);
 
-  // ЦЕЙ useEffect ВІДПОВІДАЄ ЛИШЕ ЗА РОЗМІР КОНТЕЙНЕРА
-  useEffect(() => {
-    const updateParentContainerWidth = () => {
-      if (gameBoardRef.current && gameBoardRef.current.parentElement) {
-        setParentContainerWidth(gameBoardRef.current.parentElement.offsetWidth);
-      }
-    };
-    updateParentContainerWidth();
-    window.addEventListener('resize', updateParentContainerWidth);
-    return () => {
-      window.removeEventListener('resize', updateParentContainerWidth);
-    };
-  }, []); // Пустий масив, бо ця логіка не залежить від стану
+  const initialRenderRef = useRef(true);
 
-  // ЦЕЙ useLayoutEffect ВІДПОВІДАЄ ЛИШЕ ЗА АНІМАЦІЮ ПРИ ЗМІНІ ПОЗИЦІЇ
   useLayoutEffect(() => {
     if (parentContainerWidth > 0 && gameBoardRef.current) {
       const newTargetPixelPosition = calculatePosition(playerPosition.x);
-      
-      gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
-      gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
+
+      if (initialRenderRef.current) {
+        gameBoardRef.current.style.transition = 'none';
+        gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
+        initialRenderRef.current = false;
+      } else {
+        gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
+        gameBoardRef.current.style.transform = `translateX(${newTargetPixelPosition}px)`;
+      }
     }
   }, [playerPosition.x, parentContainerWidth, animationDuration, calculatePosition]);
 
-  // ЦЕЙ useEffect ВІДПОВІДАЄ ЛИШЕ ЗА ПОЧАТКОВУ ПОЗИЦІЮ БЕЗ АНІМАЦІЇ
-  // Він спрацьовує лише один раз при першому рендері з коректними даними
-  useEffect(() => {
-    if (parentContainerWidth > 0 && gameBoardRef.current) {
-        const initialPosition = calculatePosition(playerPosition.x);
-        // Миттєве позиціонування
-        gameBoardRef.current.style.transition = `transform ${animationDuration / 1000}s ease-out`;
-        gameBoardRef.current.style.transform = `translateX(${initialPosition}px)`;
+  const totalVisibleCells = Math.ceil(viewportWidth / cellSize);
+  const totalRenderableCells = totalVisibleCells * 2 + 10;
+
+  let renderFromX;
+
+  if (initialRenderRef.current) {
+    renderFromX = 0 - Math.floor(totalVisibleCells / 2) - 5;
+  } else {
+    renderFromX = playerPosition.x - Math.floor(totalVisibleCells / 2) - 5;
+  }
+
+  const renderToX = renderFromX + totalRenderableCells;
+
+  // Використовуємо useMemo, щоб уникнути зайвих перерахунків
+  const cells = useMemo(() => {
+    const result = [];
+    for (let level = numberOfLevels - 1; level >= 0; level--) {
+      for (let x = renderFromX; x < renderToX; x++) {
+        const cellData = boardState.get(`${x}-${level}`);
+        let cellContent = null;
+        if (cellData?.content === 'stone') {
+          cellContent = <Stone cellSize={cellSize} />;
+        }
+
+        result.push(
+          <div key={`${x}-${level}`} style={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: `${cellSize}px`,
+            height: `${cellSize}px`,
+            gridColumnStart: (x - renderFromX) + 1,
+            gridRowStart: (numberOfLevels - level),
+          }}>
+            <Cell x={x} level={level}>
+              {cellContent}
+            </Cell>
+          </div>
+        );
+      }
     }
-  }, [parentContainerWidth, calculatePosition, playerPosition.x]);
+    return result;
+  }, [boardState, numberOfLevels, renderFromX, renderToX, cellSize]);
 
+  const sticmanLeftPx = (playerPosition.x - renderFromX) * cellSize;
+  const sticmanBottomPx = playerPosition.level * cellSize;
 
-  const totalRenderableCells = 500;
-  const renderStartX = -250;
-  
   const gameBoardStyle = {
     height: `${numberOfLevels * cellSize}px`,
     position: 'absolute',
     top: '0px',
-    left: `${renderStartX * cellSize}px`,
+    left: `${renderFromX * cellSize}px`,
     width: `${totalRenderableCells * cellSize}px`,
     border: '2px solid #333',
     backgroundColor: '#e0f7fa',
@@ -78,45 +105,10 @@ export const GameBoard = forwardRef(({ playerPosition, animationDuration }, ref)
     zIndex: 1,
   };
 
-  const cells = [];
-  for (let level = numberOfLevels - 1; level >= 0; level--) {
-    for (let x = renderStartX; x < totalRenderableCells + renderStartX; x++) {
-      let cellContent = null;
-      if (level === 0 && x <= 3) {
-        // Do nothing
-      } else if (level === 0 && Math.random() < 0.3) {
-        cellContent = <Stone cellSize={cellSize} />;
-      }
-      cells.push(
-        <div key={`${x}-${level}`} style={{
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: `${cellSize}px`,
-          height: `${cellSize}px`,
-          gridColumnStart: (x - renderStartX) + 1,
-          gridRowStart: (numberOfLevels - level),
-        }}>
-          <Cell
-            x={x}
-            level={level}
-          >
-            {cellContent}
-          </Cell>
-        </div>
-      );
-    }
-  }
-
-  const sticmanLeftPx = (playerPosition.x - renderStartX) * cellSize;
-  const sticmanBottomPx = playerPosition.level * cellSize;
-
   return (
     <div
       ref={gameBoardRef}
       style={gameBoardStyle}
-      // onTransitionEnd={onAnimationEnd}
     >
       <div style={gridStyle}>
         {cells}
