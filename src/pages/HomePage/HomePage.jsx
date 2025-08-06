@@ -6,24 +6,13 @@ const HomePage = () => {
   const [boardState, setBoardState] = useState(new Map());
   const animationDuration = 1000;
 
-  const boardStateRef = useRef(boardState);
-  const playerPositionRef = useRef(playerPosition);
-  
-  useEffect(() => {
-    boardStateRef.current = boardState;
-  }, [boardState]);
-  
-  useEffect(() => {
-    playerPositionRef.current = playerPosition;
-  }, [playerPosition]);
-
   const initializeBoard = useCallback(() => {
     const board = new Map();
     for (let x = 0; x < 500; x++) {
       for (let level = 0; level < 3; level++) {
         let content = null;
         if (level === 0 && x > 3 && Math.random() < 0.3) {
-            content = 'stone';
+          content = 'stone';
         }
         const key = `${x}-${level}`;
         board.set(key, { x, level, content });
@@ -37,28 +26,18 @@ const HomePage = () => {
   }, [initializeBoard]);
 
   const handleKeyDown = useCallback((event) => {
-    if (event.repeat) {
-      return;
-    }
-    
-    let newX = playerPositionRef.current.x;
-    let newLevel = playerPositionRef.current.level;
-
+    if (event.repeat) return;
+    let newX = playerPosition.x; // Використовуємо state напряму
+    let newLevel = playerPosition.level;
+    // ... логіка руху
     if (event.code === 'KeyD') newX += 1;
     else if (event.code === 'KeyA') newX -= 1;
 
-    // // !!! Тимчасово відключено: каміння не є перешкодою !!!
-    // const currentBoard = boardStateRef.current;
-    // const targetCell = currentBoard.get(`${newX}-${newLevel}`);
-    // if (targetCell && targetCell.content === 'stone') {
-    //   console.log('--- Move blocked! Cannot move to a stone. Player position remains unchanged. ---');
-    //   return;
-    // }
-    
-    if (newX !== playerPositionRef.current.x || newLevel !== playerPositionRef.current.level) {
+    if (newX !== playerPosition.x || newLevel !== playerPosition.level) {
       setPlayerPosition({ x: newX, level: newLevel });
     }
-  }, []);
+  }, [playerPosition]); // Додаємо playerPosition як залежність
+
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
